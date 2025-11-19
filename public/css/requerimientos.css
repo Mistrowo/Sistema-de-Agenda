@@ -1,0 +1,151 @@
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: #555;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 9;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.col-cliente {
+  width: 150px; /* Ajusta este valor según tu necesidad */
+  word-wrap: break-word; /* Esto hará que el texto se ajuste al ancho de la columna */
+}
+
+.col-descripcion {
+  width: 200px; /* Ajusta este valor según tu necesidad */
+  word-wrap: break-word; /* Esto hará que el texto se ajuste al ancho de la columna */
+}
+
+.col-dias {
+  width: 100px; /* Ajusta este valor según tu necesidad */
+  word-wrap: break-word; /* Esto hará que el texto se ajuste al ancho de la columna */
+}
+
+/* Resto de tu CSS */
+@keyframes slideDown {
+  from {
+      transform: translateY(-100%);
+  }
+  to {
+      transform: translateY(0);
+  }
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  background-color: #ADD8E6; 
+  color: #212529; 
+  padding: 0.2rem; 
+  font-size: 0.85rem; 
+}
+
+.table thead th:first-child {
+  border-top-left-radius: 0.25rem;
+}
+
+.table thead th:last-child {
+  border-top-right-radius: 0.25rem;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table .table {
+  background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.btn {
+  background-color: #007bff;
+  color: #70b9e9;
+  border: none;
+}
+
+.btn:hover {
+  background-color: #75a4d6;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-success {
+  background-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: #007bff;
+}
+
+.btn-icon:hover {
+  color: #0056b3;
+}
+
+.sticky-thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #ADD8E6; 
+}
+
+.table-responsive {
+  overflow-x: auto;
+  max-height: 100vh; 
+}
+
+.bg-red {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.bg-green {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}

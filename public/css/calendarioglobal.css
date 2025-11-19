@@ -1,0 +1,771 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; 
+    font-family: Montserrat, sans-serif;; 
+  }
+  
+  .container, .main-container, .sub-container {
+    background-color: #f0f0f0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    padding: 20px 0; 
+  }
+  
+  .side-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+ 
+  #nextDayButton {
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 10px;
+    border: none;
+    background: transparent;
+    transform: translate(74px); 
+   
+    transform: translateX(150px);
+    
+  }
+  
+  #todayDate {
+    transform: translate(70px, 100px);
+  }
+  #prevDayButton {
+    cursor: pointer;
+    padding: 0 5px;
+    margin-right: 10px;
+    border: none;
+    background: transparent;
+    transform: translate(120px,48px);
+}
+  
+  
+  
+  .main-title {
+    flex-grow: 1;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2rem; 
+
+  }
+  
+  
+  
+  .info {
+    font-size: 18px;
+  }
+  
+  .info span {
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+  }
+  
+  @media (max-width: 480px) {
+  }
+  
+  .main-container, .sub-container {
+    width: 100vw;
+  }
+  
+  .sub-container {
+    display: flex;
+  justify-content: space-between; 
+  padding: 20px;
+  }
+  
+  .ventas, .filtro-fechas {
+    flex: 0 0 48%; 
+  margin: 0 10px;
+  }
+  
+  .fechas {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .filtro-fechas {
+      flex: 0 0 100%; 
+      margin-bottom: 10px;
+    }
+  }
+
+  .comandos {
+    display: flex;
+    align-items: center;
+  }
+  
+  .comandos i {
+    font-size: 1.5em; 
+    margin-right: 10px;
+  }
+  
+  
+ 
+  
+  .estado-alertas {
+    display: flex;
+  }
+  
+  .cuadro {
+    width: 20px; 
+    height: 20px;
+    margin-right: 5px;
+  }
+  
+  
+  
+  @media (max-width: 768px) {
+   
+  
+    .ventas, .filtro-fechas {
+      margin-bottom: 10px;
+    }
+  
+    
+  }
+  
+  @media (max-width: 480px) {
+ 
+  }
+  .titulo-notas-ventas h2 {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: left;
+    margin: 5px 0; 
+    padding-left: 5px; 
+  }
+  
+  .section-container {
+    background-color: #f0f0f0; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .schedule-container {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.schedule-header, .schedule-row {
+    display: table-row;
+    
+}
+
+.header-item, .time-block, .data-block {
+    display: table-cell;
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    height: 50px;
+}
+
+.header-item {
+     background-color: #ddd;
+      font-weight: bold;
+}
+
+.time-block {
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+.red-column-header {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+.red-column {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .header-item, .time-block, .data-block {
+        padding: 4px; 
+        height: 40px; 
+    }
+
+    .schedule-container {
+        display: block;
+    }
+
+    .schedule-header, .schedule-row {
+        display: block;
+    }
+
+    .header-item, .time-block, .data-block {
+        display: block; 
+        width: 100%;
+        box-sizing: border-box; 
+    }
+
+    .time-block {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+.section-container {
+  padding: 20px;
+  background-color: #f0f0f0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-notas-ventas h2 {
+  margin-bottom: 20px;
+}
+
+.datos-venta-fecha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px; 
+  margin-bottom: 10px;
+}
+
+.datos-cliente-descripcion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nota-venta, .fecha-entrega, .fecha-instalacion, .cliente, .descripcion {
+  flex-grow: 1;
+  margin-right: 10px;
+  max-width: 200px; 
+}
+
+input[type="text"], input[type="date"] {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .datos-venta-fecha, .datos-cliente-descripcion {
+    flex-direction: column;
+  }
+
+  .nota-venta, .fecha-entrega, .fecha-instalacion, .cliente, .descripcion {
+    margin-right: 0;
+    margin-bottom: 10px;
+    max-width: none; 
+  }
+}
+
+
+
+
+
+
+.estado-despachos {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 20px; 
+}
+
+.estado-despacho {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.estado-indicador {
+  width: 20px; 
+  height: 20px; 
+  margin-right: 5px; 
+}
+
+.confirmado {
+  background-color: lightblue; 
+}
+
+.por-confirmar {
+  background-color: lightcoral; 
+}
+
+.post-venta {
+  background-color: lightgreen; 
+}
+
+@media (max-width: 768px) {
+  .estado-despachos {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .datos-venta-fecha, .datos-cliente-descripcion, .estado-despachos {
+    flex-basis: 100%;
+  }
+}
+
+
+
+.comandos-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.comando-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 2px;
+}
+
+.comando-btn i {
+  font-size: 16px; 
+  color: #000; 
+}
+
+@media (max-width: 768px) {
+  .comandos-container {
+    margin-top: 10px;
+  }
+}
+
+
+
+.nota-venta input[type="text"] {
+  width: 44%; 
+}
+
+
+
+.fecha-entrega input[type="date"] {
+  width: 55%; 
+}
+
+
+
+
+.fecha-instalacion input[type="date"] {
+  width: 55%;
+}
+
+
+
+label {
+  font-weight: bold;
+}
+
+
+
+
+
+
+.input-icon-container i {
+  position: absolute;
+  right: 10px; 
+  top: 70%;
+  transform: translateY(-30%); 
+  pointer-events: none; 
+}
+
+.bloques-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px; 
+  border: 2px solid #d3d3d3; 
+  border-radius: 10px; 
+  width: 30%; 
+  margin: auto; 
+}
+
+
+
+.instaladores-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px; 
+  border: 2px solid #d3d3d3; 
+  border-radius: 10px; 
+  width: 30%; 
+  margin: auto; 
+
+}
+
+
+
+.bloques-title {
+  font-size: 14px; 
+  margin: 10px 0; 
+  padding: 5px 10px;
+  display: inline-block; 
+  justify-content: center;
+  transform: translate(150px, 10px);
+}
+
+
+.bloques-title1{
+  font-size: 14px; 
+  margin: 10px 0; 
+  padding: 5px 10px;
+  display: inline-block; 
+  justify-content: center;
+  transform: translate(150px, 40px);
+}
+
+
+
+
+.bloques {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  transform: translate(400px, -490px);
+}
+
+
+.instaladores {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  transform: translate(400px, -490px);
+}
+
+
+
+.linea-vertical {
+  width: 1px; 
+  height: 100px; 
+  background-color: #d3d3d3; 
+  margin: auto; 
+  transform: translate(400px, -440px);
+}
+
+
+.comando-btn {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.comando-btn:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+
+button, a {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover, a:hover {
+  background-color: lightblue;
+  color: black;
+}
+.fa-arrow-left, .fa-arrow-right, .fa-undo, .fa-save, .fa-plus, .fa-arrow-left {
+  transition: transform 0.3s ease-in-out;
+}
+
+.fa-arrow-left:hover, .fa-arrow-right:hover, .fa-undo:hover, .fa-save:hover, .fa-plus:hover, .fa-arrow-left:hover {
+  transform: scale(1.1);
+}
+
+
+input[type="text"], input[type="date"] {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus, input[type="date"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+.modal {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.modal.open {
+  opacity: 1;
+}
+.data-block:hover {
+  background-color:lightblue;
+  cursor: pointer;
+}
+
+
+.section-container, .modal-content {
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 768px) {
+  .container, .main-container {
+    flex-direction: column;
+  }
+}
+
+
+
+.asignacion-multiple {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translate(-70px, 0); 
+}
+
+input[type="checkbox"]:disabled {
+  opacity: 0.6; 
+  cursor: not-allowed; 
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.estado-calendarizado {
+  background-color: lightblue;
+}
+
+.estado-en-espera, .estado-sin-asignar {
+  background-color: lightcoral;
+}
+.data-block {
+  min-height: 20px;
+}
+
+
+
+
+
+
+
+
+.main-title {
+  font-size: 2rem; 
+  color: #333; 
+}
+.schedule-row:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.schedule-row:nth-child(even) {
+  background-color: #e9e9e9;
+}
+button:active,
+a:active {
+  transform: scale(0.98);
+  background-color: #007bff;
+  color: #fff;
+}
+.data-block {
+  transition: background-color 0.3s ease;
+}
+.nota-venta {
+  font-weight: bold;
+}
+.cliente {
+  color: #007bff;
+}
+.button-primary {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+.button-primary:hover {
+  background-color: #0056b3;
+}
+.comando-btn .fas {
+  margin-right: 5px;
+}
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 1.5rem;
+  }
+  .schedule-container {
+    display: block;
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal.open {
+  animation: fadeIn 0.5s ease-in-out;
+}
+input.is-invalid {
+  border-color: #dc3545;
+}
+input.is-valid {
+  border-color: #28a745;
+}
+
+
+
+
+
+
+.main-title {
+  font-size: 2rem; 
+  color: #333; 
+}
+.schedule-row:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.schedule-row:nth-child(even) {
+  background-color: #e9e9e9;
+}
+button:active,
+a:active {
+  transform: scale(0.98);
+  background-color: #007bff;
+  color: #fff;
+}
+.data-block {
+  transition: background-color 0.3s ease;
+}
+.nota-venta {
+  font-weight: bold;
+}
+.cliente {
+  color: #007bff;
+}
+.button-primary {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+.button-primary:hover {
+  background-color: #0056b3;
+}
+.comando-btn .fas {
+  margin-right: 5px;
+}
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 1.5rem;
+  }
+  .schedule-container {
+    display: block;
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.date-nav-button {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+.date-nav-button:hover {
+  background-color: #e2e6ea;
+}
+
+
+
+.estado-post-venta {
+  background-color: lightgreen;
+}

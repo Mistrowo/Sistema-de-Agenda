@@ -1,0 +1,328 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+  font-family: Montserrat, sans-serif;
+}
+
+.container,
+.main-container,
+.sub-container {
+  background-color: #f0f0f0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100vw;
+  padding: 20px 0;
+}
+
+.side-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.main-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.info {
+  font-size: 18px;
+}
+
+.info span {
+  font-weight: bold;
+}
+
+.main-container,
+.sub-container {
+  width: 100vw;
+}
+
+.sub-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.ventas,
+.filtro-fechas {
+  flex: 0 0 48%;
+  margin: 0 10px;
+}
+
+.fechas {
+  display: flex;
+  align-items: center;
+}
+
+.section-container {
+  background-color: #f0f0f0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-container {
+  width: 100vw;
+  margin-bottom: 35px;
+}
+
+.fechas input[type="text"] {
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.filtro-fechas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titulo-notas-ventas h2 {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: left;
+  margin: 20px 0;
+  padding-left: 20px;
+}
+
+.titulo-notas-ventas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px; 
+}
+
+select {
+  width: 160px;
+  height: 34px;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  color: #333;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Icono de flecha */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 15px;
+}
+
+.select-calendarizado {
+  background-color: green;
+  color: white;
+}
+
+.select-no-calendarizado {
+  background-color: yellow;
+  color: black;
+}
+
+@media (max-width: 768px) {
+  .ventas,
+  .filtro-fechas {
+    flex: 0 0 100%;
+    margin-bottom: 10px;
+  }
+
+  .main-title,
+  .info,
+  .titulo-notas-ventas h2 {
+    font-size: 16px;
+  }
+
+  .sub-container,
+  .filtro-fechas {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-title,
+  .info,
+  .titulo-notas-ventas h2 {
+    font-size: 14px; 
+  }
+
+  .ventas,
+  .filtro-fechas,
+  .fechas input[type="text"],
+  select {
+    width: 100%; 
+  }
+
+  .titulo-notas-ventas {
+    height: auto; 
+  }
+
+  .container,
+  .main-container,
+  .sub-container,
+  .side-content {
+    padding: 10px; 
+  }
+}
+
+
+.fila-calendarizada {
+  background-color: lightgreen;
+}
+.fila-en-espera {
+  background-color: yellow; 
+}
+
+
+.fechas input, .fechas select {
+            margin-right: 20px;
+        }
+.table {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.table tr {
+  transition: background-color 0.3s;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+select {
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+
+
+@media (max-width: 768px) {
+}
+
+/* Mejoras de Estilo en Formularios y Botones */
+button, input[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover, input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+/* Estilos para Tablets */
+@media (max-width: 768px) {
+  .container, .main-container, .sub-container {
+    padding: 10px;
+  }
+
+  .main-title, .info, .titulo-notas-ventas h2 {
+    font-size: 16px;
+  }
+
+  .fechas input[type="text"], select {
+    width: 100%;
+    margin-bottom: 10px; 
+  }
+
+  .filtro-fechas, .sub-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-title, .info, .titulo-notas-ventas h2 {
+    font-size: 14px;
+    color: #333; 
+  }
+
+  .container, .main-container, .sub-container, .side-content {
+    padding: 10px; 
+  }
+
+  .fechas input[type="text"], select {
+    font-size: 14px;
+    margin-bottom: 10px; 
+  }
+
+  button, input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: lightblue; 
+    color: #fff;
+    border: none; 
+    transition: background-color 0.3s; 
+  }
+
+  button:hover, input[type="submit"]:hover {
+    background-color: lightblue; 
+  }
+
+  .filtro-fechas, .sub-container {
+    flex-direction: column;
+  }
+}
+
+button, input[type="submit"] {
+  min-height: 44px; 
+}
+
+
+
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+.btn-filtrar {
+  font-size: 14px; 
+  padding: 2px 10px; 
+  margin-right:30px;
+  margin-bottom:5px;
+}
+@media (max-width: 480px) {
+  .main-title, .info {
+    font-size: 14px;
+  }
+
+  .fechas input[type="text"], select {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  button, input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .filtro-fechas, .sub-container {
+    flex-direction: column;
+  }
+}

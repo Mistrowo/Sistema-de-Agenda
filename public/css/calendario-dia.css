@@ -1,0 +1,517 @@
+
+.container, .main-container  {
+    background-color: #f0f0f0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    padding: 20px 0; 
+  }
+  
+  
+ 
+ 
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+  
+  
+  
+  
+  .main-title {
+    flex-grow: 1;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  
+  
+  
+  .week-dates {
+    font-size: 16px;
+    font-style: Montserrat-Bold;
+    text-align: center;
+    margin-top: 10px; 
+  }
+  .date-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .current-date {
+    flex-grow: 1;
+    font-size: 18px;
+    transform: translate(80px, -0px);
+
+  }
+  
+  .week-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 4px 13px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .week-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  
+  .schedule-container {
+    display: table;
+    width: 100%; 
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.header-item, .time-block, .data-block {
+    display: table-cell;
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    height: 75px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .schedule-container {
+        max-width: 100%;
+    }
+}
+
+.header-item {
+     background-color: #ddd;
+      font-weight: bold;
+}
+
+
+
+.schedule-header, .schedule-row {
+  display: table-row;
+  
+}
+
+.time-block {
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+
+
+@media (max-width: 768px) {
+    .header-item, .time-block, .data-block {
+        padding: 4px; 
+        height: 40px; 
+    }
+
+    .schedule-container {
+        display: block;
+    }
+
+    .schedule-header, .schedule-row {
+        display: block;
+    }
+
+    .header-item, .time-block, .data-block {
+        display: block; 
+        width: 100%;
+        box-sizing: border-box; 
+    }
+
+    .time-block {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+}
+
+
+
+
+
+
+
+.date-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.week-dates {
+  flex-grow: 1;
+  font-size: 18px;
+}
+
+.day-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+@media (max-width: 768px) {
+  .schedule-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .data-block, .time-block {
+    display: block;
+    width: auto;
+    margin-bottom: 10px;
+  }
+}
+.prev-day-button {
+    background-color: #007bff; 
+    color: white;
+    border: none;
+    margin: 0 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-560px, 1px); 
+
+}
+
+.prev-day-button i {
+    font-size: 11px; 
+}
+
+
+
+.next-day-button {
+    background-color: #007bff; 
+    color: white;
+    border: none;
+    margin: 0 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-240px, 2px);
+}
+
+.next-day-button i {
+    font-size: 11px; /* Tamaño del ícono */
+}
+
+
+
+.back-button {
+  background-color: #6c757d; /* Gris */
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: flex;
+  align-items: right;
+  justify-content: right;
+  transform: translate(-1000px, -0px);
+
+}
+
+.back-button i {
+  font-size: 15px; /* Ajusta el tamaño del ícono según necesites */
+}
+.tooltip-text {
+  visibility: hidden;
+  width: 90px; /* Reducido de 120px a 90px */
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px; /* Ajusta el padding si es necesario */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -45px; /* Ajustado a la mitad del nuevo ancho */
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px; /* Ajusta el tamaño del texto */
+}
+
+
+.back-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.estado-calendarizado {
+  background-color: lightblue;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+ 
+}
+
+.estado-en-espera, .estado-sin-asignar {
+  background-color: lightcoral;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+}
+
+
+
+.estado-post-venta {
+  background-color: lightgreen;
+  word-wrap: break-word; /* Asegura que las palabras largas no desborden el contenedor */
+  overflow-wrap: break-word; 
+}
+
+
+
+
+.edit-icon-container {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+
+.estado-calendarizado .edit-icon-container i {
+  color: blue;
+}
+
+.estado-en-espera .edit-icon-container i {
+  color: red;
+}
+
+.estado-post-venta .edit-icon-container i {
+  color: green;
+}
+
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  padding: 15px;
+}
+
+.modal-title h2 {
+  margin-top: 0;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  flex-basis: calc(33.333% - 10px);
+  margin-right: 15px;
+}
+
+.form-field:last-child {
+  margin-right: 0;
+}
+
+.form-field input[type="text"],
+.form-field input[type="date"],
+.form-field select,
+.textarea-container textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.textarea-container {
+  flex-basis: 100%;
+}
+
+.textarea-container textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn {
+  margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    margin: 10% auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-field {
+    flex-basis: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .form-field:last-child {
+    margin-bottom: 0;
+  }
+}
+
+
+
+
+
+
+
+.modal-section1 {
+  margin-top: 15px;
+}
+
+.modal-status {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-indicators {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.indicator-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.confirmed {
+  background-color: lightblue;
+}
+
+.pending {
+  background-color: lightcoral;
+}
+
+.post-sale {
+  background-color: lightgreen;
+}
+
+.indicator-text {
+  font-size: 14px;
+}
+
+
+
+
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+.blocked-column {
+  background-color: #e0e0e0; /* Un color de fondo gris claro para indicar que está bloqueado */
+  cursor: not-allowed; /* Cambiar el cursor para indicar que no se puede interactuar */
+}
+
+
+.edit-icon-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px; /* Ajusta según sea necesario */
+  transform: translate(-120px, 60px); /* Ajusta según sea necesario */
+}
+
+.edit-icon-modal i {
+  cursor: pointer;
+  color: #007bff; /* Color azul de Bootstrap */
+}
+
+.edit-icon-modal i:hover {
+  color: #0056b3; /* Color azul más oscuro al pasar el mouse */
+}
+
+
+.tooltip-inner {
+  background-color: #007bff; /* Color de fondo del tooltip */
+  color: #fff; /* Color del texto del tooltip */
+  font-size: 14px; /* Tamaño del texto del tooltip */
+  padding: 5px 10px; /* Espaciado interno del tooltip */
+  border-radius: 4px; /* Bordes redondeados del tooltip */
+}
+
+.tooltip.bs-tooltip-top .arrow::before {
+  border-top-color: #007bff; /* Color de la flecha del tooltip para la posición superior */
+}
+
+/* Agrega reglas similares para otras posiciones del tooltip si es necesario */

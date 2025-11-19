@@ -1,0 +1,303 @@
+
+.container, .main-container  {
+    background-color: #f0f0f0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    padding: 20px 0; 
+  }
+  
+  
+ 
+ 
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+  
+  
+  
+  
+  .main-title {
+    flex-grow: 1;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  
+  
+  
+  .week-dates {
+    font-size: 16px;
+    font-style: Montserrat-Bold;
+    text-align: center;
+    margin-top: 10px; 
+  }
+  .date-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .current-date {
+    flex-grow: 1;
+    font-size: 18px;
+    
+  }
+  
+  .week-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 4px 13px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .week-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  
+  .schedule-container {
+    display: table;
+    width: 100%; 
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.header-item, .time-block, .data-block {
+    display: table-cell;
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    height: 75px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .schedule-container {
+        max-width: 100%;
+    }
+}
+
+.header-item {
+     background-color: #ddd;
+      font-weight: bold;
+}
+
+
+
+.schedule-header, .schedule-row {
+  display: table-row;
+  
+}
+
+.time-block {
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+
+
+@media (max-width: 768px) {
+    .header-item, .time-block, .data-block {
+        padding: 4px; 
+        height: 40px; 
+    }
+
+    .schedule-container {
+        display: block;
+    }
+
+    .schedule-header, .schedule-row {
+        display: block;
+    }
+
+    .header-item, .time-block, .data-block {
+        display: block; 
+        width: 100%;
+        box-sizing: border-box; 
+    }
+
+    .time-block {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+}
+
+
+
+
+
+
+
+.date-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.week-dates {
+  flex-grow: 1;
+  font-size: 18px;
+}
+
+.day-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+@media (max-width: 768px) {
+  .schedule-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .data-block, .time-block {
+    display: block;
+    width: auto;
+    margin-bottom: 10px;
+  }
+}
+
+
+.week-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-330px, 10px); 
+
+  
+}
+
+
+
+
+.week-button1 {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(330px, 10px); 
+
+  
+}
+
+
+.week-button i {
+  font-size: 10px; 
+}
+
+
+.week-button1 i {
+  font-size: 11px; 
+}
+
+
+
+
+
+
+.back-button {
+  background-color: #6c757d; /* Gris */
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: flex;
+  align-items: right;
+  justify-content: right;
+  transform: translate(-900px, -0px);
+
+}
+
+.back-button i {
+  font-size: 15px; 
+}
+.tooltip-text {
+  visibility: hidden;
+  width: 90px; 
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px; 
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -45px; 
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px; 
+}
+
+
+.back-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.estado-calendarizado .edit-icon-container i {
+  color: blue;
+}
+
+.estado-en-espera .edit-icon-container i {
+  color: red;
+}
+
+.estado-post-venta .edit-icon-container i {
+  color: green;
+}
+
+
+
+.bloque-ocupado {
+  background-color: #f0ad4e; 
+}
+
+
+#notasVentaModal .modal-dialog {
+  max-width: 70%; 
+}
+
+#notasVentaModal .table {
+  width: 100%; 
+  table-layout: auto; 
+}
+
+#notasVentaModal .table th,
+#notasVentaModal .table td {
+  white-space: nowrap; 
+  padding: 0.75rem;
+}

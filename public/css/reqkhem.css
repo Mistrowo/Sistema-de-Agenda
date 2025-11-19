@@ -1,0 +1,451 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; 
+    font-family: Montserrat, sans-serif;; 
+  }
+  
+  .container, .main-container, .sub-container {
+    background-color: #f0f0f0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    padding: 20px 0; 
+  }
+  
+  .side-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .main-title {
+    flex-grow: 1;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2rem; /* Aumenta el tamaño para más importancia */
+  
+  }
+  
+  .info {
+    font-size: 18px;
+  }
+  
+  .info span {
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+  }
+  
+  @media (max-width: 480px) {
+  }
+  
+  .main-container, .sub-container {
+    width: 100vw;
+  }
+  
+  .sub-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .ventas, .filtro-fechas {
+    flex: 0 0 48%;
+    margin: 0px;
+  }
+  
+  .fechas {
+    display: flex;
+    align-items: center;
+  }
+  
+  @media (max-width: 768px) {
+    .filtro-fechas {
+      flex: 0 0 100%;
+      margin-bottom: 10px;
+    }
+  }
+  
+  .comandos {
+    display: flex;
+    align-items: center;
+  }
+  
+  .comandos i {
+    font-size: 1.5em;
+    margin-right: 10px;
+  }
+  
+  .estado-alertas {
+    display: flex;
+  }
+  
+  
+  
+  .cuadro {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+  
+  @media (max-width: 768px) {
+    .ventas, .filtro-fechas {
+      margin-bottom: 0px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+  }
+  
+  .titulo-notas-ventas h2 {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: left;
+    margin: 20px 0;
+    padding-left: 20px;
+  }
+  
+  .section-container {
+    background-color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-container {
+    width: 100vw;
+    margin-bottom: 35px;
+  }
+  
+  .alertas {
+    display: flex;
+    align-items: center;
+    flex-direction: column; 
+  }
+  
+  .alerta {
+    display: flex;
+    align-items: center;
+    margin-right: 15px; 
+  }
+  
+  .alerta-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; 
+  }
+  
+  .filtro-fechas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 0;
+  }
+  
+  .fechas, .comandos, .alertas {
+    margin: 0 10px;
+  }
+  
+  .fechas, .alertas {
+    flex: 1;
+  }
+  
+  .comandos {
+    flex-grow: 0;
+    justify-self: center;
+  }
+  
+  .fechas, .alertas {
+    width: calc(50%);
+  }
+  
+  .comandos i, .alertas .alerta {
+    display: inline-block;
+  }
+  
+  .fechas, .comandos, .alertas {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .titulo-comandos, .titulo-alertas {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .comandos {
+    justify-content: center;
+  }
+  
+  
+  span {
+    font-weight: bold;
+    align-self: flex-start;
+  }
+  
+  .comandos i, .alertas .alerta {
+    margin: 0 5px;
+  }
+  
+  
+  
+  
+  
+  .alerta {
+    display: flex;
+    align-items: center; 
+  }
+  
+  .cuadro.alerta-color {
+    width: 20px;
+    height: 20px;
+    display: inline-block; 
+    margin-right: 5px; 
+  }
+  
+  .alerta span {
+    display: inline-block; 
+    margin-right: 10px; 
+  }
+  
+  .Calendarizado {
+    background-color: lightgreen; /* Verde claro para 'Calendarizado' */
+  }
+  .En-espera {
+    background-color: yellow; /* Amarillo para 'Enespera' */
+  }
+  
+  
+  
+      .fila-roja {
+          background-color: red;
+      }
+  
+  
+  
+  
+      .estado-ola {
+        color: red;
+    }
+  
+  
+  
+  
+  
+  
+  
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+  
+  .tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  
+  
+  
+  
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th, .table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  
+  
+  .table tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  input[type="date"], button {
+    border: 1px solid #ccc;
+    padding: 4px;
+    margin: 0px 0;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+  }
+  
+  input[type="date"]:hover, input[type="date"]:focus, button:hover {
+    border-color: #007bff;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  
+  .section-container {
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .section-container:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  
+  .comandos i {
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .comandos i:hover {
+    color: #007bff;
+  }
+  
+  
+  .tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(-5px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .estado-en-espera {
+    background-color: yellow;
+  }
+  
+  .estado-calendarizado {
+    background-color: lightgreen;
+  }
+  .estado-rojo {
+    background-color: lightcoral;
+  }
+  
+  
+  
+  .modal-content {
+    background-color: #f8f9fa; 
+    color: #333; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); 
+  }
+  
+  .modal-header {
+    background-color: #0099ff; 
+    color: #fff; 
+  }
+  
+  .modal-footer .btn {
+    background-color: #007bff; 
+    color: #fff; 
+  }
+  
+  
+  @keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+  }
+  
+  .modal-dialog {
+    animation: slideDown 0.5s ease-out;
+  }
+  
+  .alerta {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+  }
+  
+  .cuadro.alerta-icon, .cuadro.alerta-color {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+  
+  .alerta span {
+    display: inline-block;
+    margin-left: 5px; 
+  }
+  
+  
+  
+  
+  .fechas {
+   
+    transform: translate(200px, -8px);
+  }
+  
+  
+  .boton-fecha {
+   
+    transform: translate(380px, -8px);
+  }
+  
+  
+  
+  .comandos {
+   
+    transform: translate(0px, -8px);
+  }
+  
+
+
+  
+  .alertas {
+   
+    transform: translate(0px, -8px);
+  }
+
+
+  .main-container {
+    margin-bottom: 0; /* Reduce o elimina el margen inferior */
+}
+
+
+.table {
+  margin-top: 20px; /* Reduce o elimina el margen superior */
+}
