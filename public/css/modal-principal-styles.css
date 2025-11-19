@@ -1,0 +1,124 @@
+/* ===================================================================
+   ESTILOS ESPECÍFICOS PARA MODAL PRINCIPAL
+   ================================================================
+   Este archivo contiene ÚNICAMENTE los estilos del modal #miModal
+   NO modifica otros componentes, modales, headers, ni calendario
+   ================================================================ */
+
+/* Modal Principal - Override específico */
+#miModal.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Content Principal */
+#miModal .modal-content {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Close Button específico del modal principal */
+#miModal .close-button {
+    transition: all 0.3s ease;
+}
+
+#miModal .close-button:hover {
+    transform: rotate(90deg);
+}
+
+/* Botones de acción del modal principal */
+#miModal .comando-btn {
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#miModal .comando-btn:hover {
+    transform: translateY(-2px);
+}
+
+#miModal .comando-btn:active {
+    transform: translateY(0);
+}
+
+/* Status checkboxes personalizados */
+#miModal .status-checkbox:checked + label {
+    border-width: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#miModal .status-checkbox:checked + label .indicator-color {
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+/* Inputs y selects del modal principal */
+#miModal input[type="text"],
+#miModal input[type="date"],
+#miModal select,
+#miModal textarea {
+    transition: all 0.3s ease;
+}
+
+#miModal input[type="text"]:hover,
+#miModal input[type="date"]:hover,
+#miModal select:hover,
+#miModal textarea:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Checkboxes de bloques e instaladores */
+#miModal .bloques-container input[type="checkbox"]:checked + span,
+#miModal .instaladores-container input[type="checkbox"]:checked + span {
+    font-weight: 600;
+}
+
+/* Responsive para el modal principal */
+@media (max-width: 768px) {
+    #miModal .modal-content {
+        margin: 2% auto;
+        width: 98% !important;
+        max-width: 98% !important;
+    }
+
+    #miModal .modal-body {
+        max-height: 65vh !important;
+    }
+
+    #miModal .grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Tooltip animation */
+#miModal .tooltip-container:hover .tooltip-text {
+    animation: tooltipSlide 0.3s ease-out;
+}
+
+@keyframes tooltipSlide {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

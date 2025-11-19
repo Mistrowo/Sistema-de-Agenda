@@ -1,321 +1,315 @@
-
-<div class="modal" id="miModal">
-    
+<!-- Modal Principal - Lectura Agenda Instalaciones -->
+<div class="modal fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto" id="miModal" style="display: none;">
+    <div class="flex items-center justify-center min-h-screen p-4">
         
-    <div class="modal-content">
-        <span class="close-button" onclick="cerrarModal()">&times;</span>
-    
-            <div class="modal-header">
-            <div class="modal-title">
-                <h2>LECTURA AGENDA INSTALACIONES</h2>
-                <div class="datos">
-                <span>Fecha: <strong>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</strong></span>
-                <span>Usuario: <strong>{{ session('usuario') ? session('usuario')->NOMBRE : 'Usuario no autenticado' }}</strong></span>
+        <!-- Contenedor del Modal -->
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            
+            <!-- Header del Modal -->
+            <div class="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white bg-opacity-20 rounded-lg p-2">
+                            <i class="fas fa-clipboard-list text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">Agenda de Instalaciones</h2>
+                            <p class="text-sm text-slate-300">{{ \Carbon\Carbon::now()->format('d-m-Y') }} • {{ session('usuario') ? session('usuario')->NOMBRE : 'Usuario' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón Cerrar -->
+                    <button onclick="cerrarModal()" 
+                            class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg w-10 h-10 flex items-center justify-center transition-all text-2xl">
+                        ×
+                    </button>
                 </div>
-
-                
             </div>
-           
 
-            <div id="selectedDates"></div>
-            
-            
-            <div class="modal-meta">
-               <div class="datos2">
+            <!-- Barra de Acciones -->
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-3">
                 <form id="miFormulario" method="POST" action="{{ route('agenda_def.store') }}">
-                @csrf
-                <button class="comando-btn"></i></button>
-                <button type="button" id="guardarBtn" class="comando-btn tooltip-container">
-                    <span class="tooltip-text" id="tooltipText">Guardar Requerimiento</span>
-                    <i class="fa fa-save" id="iconoGuardar"></i>
-                </button>
-                
+                    @csrf
+                    <div class="flex flex-wrap items-center gap-2">
+                        
+                        <!-- Botón Guardar -->
+                        <button type="button" id="guardarBtn" 
+                                class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all shadow-sm hover:shadow-md font-medium text-sm">
+                            <i class="fa fa-save" id="iconoGuardar"></i>
+                            <span>Guardar</span>
+                        </button>
 
-            <button type="button" id="botonEliminar" class="comando-btn" class="tooltip-container">
-                <span class="tooltip-text">Eliminar Requerimiento</span>
-                <i class="fas fa-trash"></i> 
-            </button>
+                        <!-- Botón Editar -->
+                        <button type="button" id="botoneditar"
+                                class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm hover:shadow-md font-medium text-sm">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Editar</span>
+                        </button>
 
-            <button type="button" id="botoneditar" class="comando-btn" class="tooltip-container">
-                <span class="tooltip-text">Editar Requerimiento</span>
-                <i class="fas fa-pencil-alt"></i> 
-            </button>
+                        <!-- Botón Eliminar -->
+                        <button type="button" id="botonEliminar"
+                                class="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all shadow-sm hover:shadow-md font-medium text-sm">
+                            <i class="fas fa-trash"></i>
+                            <span>Eliminar</span>
+                        </button>
 
-            <button type="button" id="botonmultiple" class="comando-btn tooltip-container">
-                <span class="tooltip-text">Guardar Múltiple</span>
-                <i class="fa fa-tasks"></i>
-            </button>
-            
-            
+                        <!-- Botón Múltiple -->
+                        <button type="button" id="botonmultiple"
+                                class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition-all shadow-sm hover:shadow-md font-medium text-sm">
+                            <i class="fa fa-tasks"></i>
+                            <span>Asignación Múltiple</span>
+                        </button>
 
-            
-            
-
-            </div>
-            </div>
-            
-            </div>
-            
-        
-
-
-
-        <div class="modal-body">
-        
-            <div class="form-row">
-
-
-                <div class="form-field third-width">
-                    <label for="horaBloque">Hora/Bloque</label>
-                    <select name="bloque" id="horaBloque">
-                        <option value="" selected></option>
-                    </select>
-                </div>
-          
-                <input type="hidden" id="bloqueAntiguo" name="bloque_antiguo">
-
-        
-
-
-             
-                <div class="form-field third-width input-icon-container">
-                    <label for="transportista">Nombre del Transporte</label>
-                    <input type="text" name="transportista" id="transportista" value="{{ $transportista ?? 'No definido' }}">
-                    <span class="icon-button" data-toggle="modal" data-target="#modalTransporteNuevo">
-                        <i class="fas fa-binoculars"></i>
-                    </span>
-                </div>
-                
-                
-                
-
-
-
-            <div class="form-field third-width input-icon-container">
-                <label for="notaVenta">Nota Venta</label>
-                <input type="text" id="notaVenta" name="nota_venta" placeholder="N°">
-            </div>
-            <div class="form-field third-width">
-                <label for="descripcion">Descripción</label>
-                <input type="text"  id="descripcionModal">
-            </div>
-
-           
-           
-
-            </div>
-        
-            <div class="form-row">
-
-                <div class="form-field third-width">
-                    <label for="instalador">Instalador</label>
-                    <select name="instalador" id="instalador">
-                      
-                        <option value="" selected></option>
-                    </select>
-                </div>
-
-                <input type="hidden" id="instaladorAntiguo" name="instalador_antiguo">
-
-          
-
-            <div class="form-field half-width">
-                <label for="fechaInstalacionModal">Fecha Instalación</label>
-                <input type="date" id="fechaInstalacionModal">
-            </div>
-            
-            <div class="form-field half-width">
-                <label for="fechaEntrega">Fecha Entrega</label>
-                <input type="text" name="fecha_entrega" id="fechaEntregaModal" value="{{ $calendarioDef->fecha_fabril ?? 'No definido' }}">
-            </div>
-          
-            
-            <div class="form-field third-width">
-                <label for="cliente">Cliente</label>
-                <input type="text" name="cliente" id="cliente">
-            </div>
-
-            <div class="linea-vertical"></div>
-
-            
-            
-        </div>
-
-            
-
-
-
-            
-
-        </div>
-        
-        
-        
-            <div class="modal-row">
-                <div class="modal-observations">
-                    <div class="textarea-container">
-                        <label for="observacionesExtra">Nota Resumida (Visible en Agenda)</label>
-                        <textarea id="observaciones3" name="nota_resumida2" maxlength="60"></textarea>
-                
-                        <label for="observaciones2">Nota Resumida </label>
-                        <textarea id="observaciones2" name="nota_resumida"></textarea>
+                        <div id="selectedDates"></div>
                     </div>
-                    
-                    <div class="textarea-container">
-                        <label for="observaciones1">Observaciones Instaladores</label>
-                        <textarea id="observaciones1" name="observacion_bloque" readonly>{{ $observacion ?? 'No definido' }}</textarea>
+                </form>
+            </div>
+
+            <!-- Contenido del Modal -->
+            <div class="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-180px)]">
+                
+                <!-- Sección 1: Información Principal -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-slate-700 rounded-full"></div>
+                        Información General
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <!-- Hora/Bloque -->
+                        <div>
+                            <label for="horaBloque" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Hora/Bloque
+                            </label>
+                            <select name="bloque" id="horaBloque"
+                                    class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                                <option value="" selected></option>
+                            </select>
+                            <input type="hidden" id="bloqueAntiguo" name="bloque_antiguo">
+                        </div>
+
+                        <!-- Transportista -->
+                        <div>
+                            <label for="transportista" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Transportista
+                            </label>
+                            <div class="relative">
+                                <input type="text" name="transportista" id="transportista" 
+                                       value="{{ $transportista ?? 'No definido' }}"
+                                       class="w-full px-3 py-2.5 pr-10 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                                <button type="button" data-toggle="modal" data-target="#modalTransporteNuevo"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                    <i class="fas fa-search text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nota Venta -->
+                        <div>
+                            <label for="notaVenta" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Nota de Venta
+                            </label>
+                            <input type="text" id="notaVenta" name="nota_venta" placeholder="N°"
+                                   class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                        </div>
+
+                        <!-- Descripción -->
+                        <div>
+                            <label for="descripcionModal" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Descripción
+                            </label>
+                            <input type="text" id="descripcionModal"
+                                   class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                        </div>
                     </div>
                 </div>
-                
-            </div>
-            
-        
 
+                <!-- Sección 2: Instalador y Fechas -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-slate-700 rounded-full"></div>
+                        Instalador y Fechas
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <!-- Instalador -->
+                        <div>
+                            <label for="instalador" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Instalador
+                            </label>
+                            <select name="instalador" id="instalador"
+                                    class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                                <option value="" selected></option>
+                            </select>
+                            <input type="hidden" id="instaladorAntiguo" name="instalador_antiguo">
+                        </div>
 
-        <div class="modal-section1">
+                        <!-- Fecha Instalación -->
+                        <div>
+                            <label for="fechaInstalacionModal" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Fecha Instalación
+                            </label>
+                            <input type="date" id="fechaInstalacionModal"
+                                   class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                        </div>
 
-                <div class="modal-status">
-                <label for="observaciones">Estado  de la Instalacion</label>
+                        <!-- Fecha Entrega -->
+                        <div>
+                            <label for="fechaEntregaModal" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Fecha Entrega
+                            </label>
+                            <input type="text" name="fecha_entrega" id="fechaEntregaModal" 
+                                   value="{{ $calendarioDef->fecha_fabril ?? 'No definido' }}"
+                                   class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                        </div>
 
-                <div class="status-indicators">
-                    <div class="status-indicator">
-                        <input type="checkbox" class="status-checkbox" id="confirmedCheckbox" name="estado" value="Calendarizado">
-                        <label for="confirmedCheckbox">
-                            <div class="indicator-color confirmed"></div>
-                            <div class="indicator-text">Despacho Confirmado</div>
+                        <!-- Cliente -->
+                        <div>
+                            <label for="cliente" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Cliente
+                            </label>
+                            <input type="text" name="cliente" id="cliente"
+                                   class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Notas -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-slate-700 rounded-full"></div>
+                        Notas y Observaciones
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- Nota Resumida Visible -->
+                        <div>
+                            <label for="observaciones3" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Nota Resumida (Visible en Agenda)
+                            </label>
+                            <textarea id="observaciones3" name="nota_resumida2" maxlength="60" rows="2"
+                                      class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm resize-none"
+                                      placeholder="Máximo 60 caracteres"></textarea>
+                        </div>
+
+                        <!-- Nota Resumida -->
+                        <div>
+                            <label for="observaciones2" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                Nota Resumida Completa
+                            </label>
+                            <textarea id="observaciones2" name="nota_resumida" rows="2"
+                                      class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 4: Estado de la Instalación -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-slate-700 rounded-full"></div>
+                        Estado de la Instalación
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        
+                        <!-- Despacho Confirmado -->
+                        <label class="flex items-center gap-3 px-4 py-3 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer transition-all min-w-[160px]">
+                            <input type="checkbox" class="status-checkbox w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                                   id="confirmedCheckbox" name="estado" value="Calendarizado">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <span class="text-sm font-medium text-slate-700">Confirmado</span>
+                            </div>
+                        </label>
+
+                        <!-- Post Venta -->
+                        <label class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border-2 border-emerald-200 rounded-lg hover:bg-emerald-100 cursor-pointer transition-all min-w-[160px]">
+                            <input type="checkbox" class="status-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" 
+                                   id="postSaleCheckbox" name="estado" value="Post-Venta">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <span class="text-sm font-medium text-slate-700">Post Venta</span>
+                            </div>
+                        </label>
+
+                        <!-- Por Confirmar -->
+                        <label class="flex items-center gap-3 px-4 py-3 bg-red-50 border-2 border-red-200 rounded-lg hover:bg-red-100 cursor-pointer transition-all min-w-[160px]">
+                            <input type="checkbox" class="status-checkbox w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500" 
+                                   id="pendingCheckbox" name="estado" value="En espera">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <span class="text-sm font-medium text-slate-700">Por Confirmar</span>
+                            </div>
                         </label>
                     </div>
-                    <div class="status-indicator">
-                        <input type="checkbox" class="status-checkbox" id="postSaleCheckbox" name="estado" value="Post-Venta">
-                        <label for="postSaleCheckbox">
-                            <div class="indicator-color post-sale"></div>
-                            <div class="indicator-text">Post Venta</div>
-                        </label>
-                    </div>
-                    <div class="status-indicator">
-                        <input type="checkbox" class="status-checkbox" id="pendingCheckbox" name="estado" value="En espera">
-                        <label for="pendingCheckbox">
-                            <div class="indicator-color pending"></div>
-                            <div class="indicator-text">Por Confirmar</div>
-                        </label>
-                    </div>
-                </div>
-                
-                
                 </div>
 
-            </form>
-   
+                <!-- Sección 5: Asignación Múltiple -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <div class="w-1 h-5 bg-slate-700 rounded-full"></div>
+                            Asignación Múltiple
+                        </h3>
+                        <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-600">Activar:</span>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="asignacion_multiple" value="si" id="asignacion_si"
+                                       class="w-4 h-4 text-slate-600 focus:ring-slate-500">
+                                <span class="text-sm font-medium text-slate-700">Sí</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="asignacion_multiple" value="no" id="asignacion_no"
+                                       class="w-4 h-4 text-slate-600 focus:ring-slate-500">
+                                <span class="text-sm font-medium text-slate-700">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        
+                        <!-- Bloques -->
+                        <div class="bg-white rounded-lg p-4 border border-slate-200">
+                            <h4 class="text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Bloques Horarios</h4>
+                            <div class="grid grid-cols-2 gap-2 bloques-container">
+                                @foreach([
+                                    ['id' => 'A-1', 'label' => 'A-1 (08-10)', 'value' => 'BLOQUE A-1 (8:00-10:00)'],
+                                    ['id' => 'A-2', 'label' => 'A-2 (10-12)', 'value' => 'BLOQUE A-2 (10:00-12:00)'],
+                                    ['id' => 'A-3', 'label' => 'A-3 (12-14)', 'value' => 'BLOQUE A-3 (12:00-14:00)'],
+                                    ['id' => 'A-4', 'label' => 'A-4 (14-16)', 'value' => 'BLOQUE A-4 (14:00-16:00)'],
+                                    ['id' => 'A-5', 'label' => 'A-5 (16-18)', 'value' => 'BLOQUE A-5 (16:00-18:00)'],
+                                    ['id' => 'A-6', 'label' => 'A-6 (18-20)', 'value' => 'BLOQUE A-6 (18:00-20:00)'],
+                                    ['id' => 'A-7', 'label' => 'A-7 (20-22)', 'value' => 'BLOQUE A-7 (20:00-22:00)'],
+                                    ['id' => 'A-8', 'label' => 'A-8 (22-24)', 'value' => 'BLOQUE A-8 (22:00-24:00)']
+                                ] as $bloque)
+                                <label class="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:border-slate-300 cursor-pointer transition-all">
+                                    <input type="checkbox" name="bloque" value="{{ $bloque['value'] }}" data-id="{{ $bloque['id'] }}"
+                                           class="w-3.5 h-3.5 rounded border-slate-300 text-slate-600">
+                                    <span class="text-xs font-medium text-slate-700">{{ $bloque['label'] }}</span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Instaladores -->
+                        <div class="bg-white rounded-lg p-4 border border-slate-200">
+                            <h4 class="text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Instaladores</h4>
+                            <div class="grid grid-cols-2 gap-2 instaladores-container">
+                                @foreach(['DIEGO', 'FRANCO', 'GABRIEL', 'JONATHAN', 'ILESA', 'BODEGA', 'VOLANTE'] as $instalador)
+                                <label class="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:border-slate-300 cursor-pointer transition-all">
+                                    <input type="checkbox" name="instalador" value="{{ $instalador }}"
+                                           class="w-3.5 h-3.5 rounded border-slate-300 text-slate-600">
+                                    <span class="text-xs font-medium text-slate-700">{{ $instalador }}</span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo hidden para observaciones (mantener compatibilidad) -->
+                <textarea id="observaciones1" name="observacion_bloque" class="hidden">{{ $observacion ?? 'No definido' }}</textarea>
+
             </div>
-
-            
-                <div class="bloques">
-                    <h3 class="bloques-title1">Bloques</h3>
-                    <div class="asignacion-multiple">
-                    <span>Asignación múltiple</span>
-                    <label><input type="radio" name="asignacion_multiple" value="si" id="asignacion_si"> Sí</label>
-                    <label><input type="radio" name="asignacion_multiple" value="no" id="asignacion_no"> No</label>
-                    </div>
-                    
-                <div class="bloques-container">
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-1 (8:00-10:00)" data-id="A-1">BLOQUE A-1(08-10)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-2 (10:00-12:00)" data-id="A-2" > BLOQUE A-2(10-12)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-3 (12:00-14:00)" data-id="A-3" > BLOQUE A-3(12-14)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-4 (14:00-16:00)" data-id="A-4"> BLOQUE A-4(14-16) </label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-5 (16:00-18:00)" data-id="A-5"> BLOQUE A-5(16-18)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-6 (18:00-20:00)" data-id="A-6"> BLOQUE A-6(18-20)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-7 (20:00-22:00)" data-id="A-7"> BLOQUE A-7(20-22)</label>
-                    <label><input type="checkbox" name="bloque" value="BLOQUE A-8 (22:00-24:00)" data-id="A-8"> BLOQUE A-8(22-24)</label>
-                </div>
-                </div>
-
-                <div class="instaladores">
-                <h3 class="bloques-title">Instaladores</h3>
-                <div class="instaladores-container">
-                        <label><input type="checkbox" name="instalador" value="DIEGO"> DIEGO</label>
-                        <label><input type="checkbox" name="instalador" value="FRANCO"> FRANCO</label>
-                        <label><input type="checkbox" name="instalador" value="GABRIEL"> GABRIEL</label>
-                        <label><input type="checkbox" name="instalador" value="JONATHAN">JONATHAN </label>
-                        <label><input type="checkbox" name="instalador" value="ILESA"> ILESA</label>
-                        <label><input type="checkbox" name="instalador" value="BODEGA"> BODEGA</label>
-                        <label><input type="checkbox" name="instalador" value="VOLANTE">VOLANTE </label>
-                
-
-                </div>
-                </div>
-
-             
-            </div>
-
-
-
-</div>
-
-<div class="modal fade" id="modalTransporteNuevo" tabindex="-1" role="dialog" aria-labelledby="modalTransporteNuevoLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header-transporte-nuevo">
-                <h5 class="modal-title" id="modalTransporteNuevoLabel">Datos de Transporte</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body-transporte-nuevo">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="campo1Nuevo">Despacha</label>
-                        <input type="text" class="form-control" id="campo1Nuevo">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="campo2Nuevo">Recibe</label>
-                        <input type="text" class="form-control" id="campo2Nuevo">
-                    </div>
-                </div>
-
-
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="campo3Nuevo">Patente</label>
-                        <input type="text" class="form-control" id="campo3Nuevo">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="campo4Nuevo">Nombre Conductor</label>
-                        <input type="text" class="form-control" id="campo4Nuevo">
-                    </div>
-                </div>
-
-
-                <div class="form-row">
-
-
-                    <div class="form-group col-md-6">
-                        <label for="campo7Nuevo">Numero Celular</label>
-                        <input type="number" class="form-control" id="campo7Nuevo">
-                    </div>
-                   
-                    <div class="form-group col-md-6">
-                        <label for="campo6Nuevo">Rut </label>
-                        <input type="text" class="form-control" id="campo6Nuevo">
-                    </div>
-                </div>
-
-
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="acompanantes">Acompañantes </label>
-                        <input type="text" class="form-control" id="acompanantes" name="acompanantes" placeholder="Acompañante 1, Acompañante 2, Acompañante 3">
-                    </div>
-                </div>
-                
-
-                
-            </div>
-            <div class="modal-footer-transporte-nuevo">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Guardar cambios</button>
-            </div>
-            
         </div>
     </div>
 </div>

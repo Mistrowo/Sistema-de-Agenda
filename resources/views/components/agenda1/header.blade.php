@@ -1,100 +1,140 @@
+<!-- Header PREMIUM - Mismo tamaño, mismo color, 1000% más elegante -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
 
-<div class="section-container">
-    <div class="titulo-notas-ventas">
-    <h2>Instalación</h2>
-    </div>
-    
-    <div class="datos-venta-fecha">
-    <div class="nota-venta">
-        <label for="notaVentaNum">Nota de Venta N°:</label>
-        <input type="text" id="notaVentaNum" value="{{ $calendarioDef->nota_venta ?? '' }}" readonly>          </div>
-    
-    
-    <div class="cliente">
-        <label for="clienteNombre">Cliente:</label>
-        <input type="text" id="clienteNombre" value="{{ $calendarioDef->cliente ?? '' }}" readonly>
-        </div>
-    <div class="descripcion">
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" value="{{ $calendarioDef->descripcion ?? ''  }}" readonly>
-    </div>
+    <!-- Barra Superior: Logo + Usuario + Acciones -->
+    <div class="bg-gradient-to-r from-white-50/70 via-cyan-50/70 to-sky-50/70 border-b border-blue-100/80 backdrop-blur-sm">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14">
 
+                <!-- Logo + Título -->
+                <div class="flex items-center gap-3">
+                  
+                    <div>
+                        <h1 class="text-lg font-black text-gray-800 tracking-tight">Calendario Instalaciones</h1>
+                    </div>
+                </div>
 
-    <div class="form-field half-width">
-        <label for="fechaEntrega">Fecha Entrega</label>
-        <input type="text" id="fechaEntregaModal" value="{{$calendarioDef->fecha_fabril}}">
-    </div>
-    
-   
+                <!-- Acciones Derecha -->
+                <div class="flex items-center gap-3">
 
-    <div class="form-field half-width">
-        <label for="fechaInstalacion2">Fecha Instalación</label>
-        <select id="fechaInstalacion2" onchange="mostrarInformacion(this.value)" class="select-estilo">
-            @foreach ($fechasInstalacion2 as $fecha)
+                    <!-- Info Usuario y Fecha (solo desktop) -->
+                    <div class="hidden md:flex items-center gap-3 text-xs">
+                        <div class="flex items-center gap-2 bg-white/80 backdrop-blur border border-blue-100 px-3 py-1.5 rounded-xl shadow-sm hover:shadow transition">
+                            <i class="fas fa-calendar-day text-blue-500"></i>
+                            <span class="font-semibold text-gray-700">{{ session('fecha', now()->format('d-m-Y')) }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/80 backdrop-blur border border-blue-100 px-3 py-1.5 rounded-xl shadow-sm hover:shadow transition">
+                            <i class="fas fa-user-circle text-blue-500"></i>
+                            <span class="font-semibold text-gray-700 truncate max-w-32">
+                                {{ session('usuario') ? session('usuario')->NOMBRE : 'Usuario' }}
+                            </span>
+                        </div>
+                    </div>
 
-                <option value="{{ $fecha }}" {{ $loop->first ? 'selected' : '' }}>{{ $fecha }}</option>
-            @endforeach
-        </select>
-        
-    </div>
-    
-    
-    <div class="estado-despachos">
-        <div class="estado-despacho">
-        <div class="estado-indicador confirmado"></div>
-        <div class="estado-texto">Despacho Confirmado:</div>
-        </div>
-        <div class="estado-despacho">
-        <div class="estado-indicador por-confirmar"></div>
-        <div class="estado-texto">Por Confirmar:</div>
-        </div>
-        <div class="estado-despacho">
-        <div class="estado-indicador post-venta"></div>
-        <div class="estado-texto">Post Venta:</div>
+                    <!-- Botón Volver -->
+                    <button onclick="goBack()"
+                            class="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 border border-gray-300 rounded-xl shadow-sm hover:shadow transition-all duration-200 font-medium text-gray-700 text-xs">
+                        <i class="fas fa-arrow-left text-gray-600 group-hover:-translate-x-0.5 transition"></i>
+                        <span class="hidden sm:inline">Volver</span>
+                    </button>
+
+                    <!-- Cerrar Sesión -->
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit"
+                                class="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 font-medium text-xs">
+                            <i class="fas fa-sign-out-alt group-hover:rotate-12 transition"></i>
+                            <span class="hidden sm:inline">Cerrar Sesión</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-    
-        <div class="comandos-container">
-        
-            <button class="comando-btn" onclick="goBack()">
-                <i class="fa fa-undo"></i>
-                <span class="tooltip-text">Volver al calendario</span>
-            </button>
-            <script>
-                function goBack() {
-                    window.history.back();
-                }
-                </script>
-                
-        
-        
+
+    <!-- Filtros / Información de la NV -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+                <!-- Nota de Venta -->
+                <div class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-4 border border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-file-invoice text-blue-600 text-sm"></i>
+                        <span class="text-[10px] font-black text-blue-700 uppercase tracking-wider">Nota de Venta</span>
+                    </div>
+                    <p class="text-lg font-black text-gray-800 truncate">
+                        {{ $calendarioDef->nota_venta ?? '—' }}
+                    </p>
+                </div>
+
+                <!-- Cliente -->
+                <div class="group relative bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl p-4 border border-emerald-200 hover:border-emerald-400 hover:shadow-lg transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-user text-emerald-600 text-sm"></i>
+                        <span class="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Cliente</span>
+                    </div>
+                    <p class="text-base font-bold text-gray-800 truncate">
+                        {{ $calendarioDef->cliente ?? 'Sin cliente' }}
+                    </p>
+                </div>
+
+                <!-- Descripción -->
+                <div class="group relative bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-4 border border-purple-200 hover:border-purple-400 hover:shadow-lg transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-align-left text-purple-600 text-sm"></i>
+                        <span class="text-[10px] font-black text-purple-700 uppercase tracking-wider">Descripción</span>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700 line-clamp-2">
+                        {{ $calendarioDef->descripcion ?? 'Sin descripción' }}
+                    </p>
+                </div>
+
+                <!-- Fecha Entrega -->
+                <div class="group relative bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-4 border border-orange-200 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-truck text-orange-600 text-sm"></i>
+                        <span class="text-[10px] font-black text-orange-700 uppercase tracking-wider">Fecha Entrega</span>
+                    </div>
+                    <p class="text-base font-bold text-gray-800">
+                        {{ $calendarioDef->fecha_fabril ? \Carbon\Carbon::parse($calendarioDef->fecha_fabril)->format('d/m/Y') : '—' }}
+                    </p>
+                </div>
+
+                <!-- Fecha Instalación (Selector) -->
+                <div class="group relative bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl p-4 border border-cyan-200 hover:border-cyan-400 hover:shadow-lg transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-tools text-cyan-600 text-sm"></i>
+                        <span class="text-[10px] font-black text-cyan-700 uppercase tracking-wider">Fecha Instalación</span>
+                    </div>
+                    <select id="fechaInstalacion2" onchange="mostrarInformacion(this.value)"
+                            class="w-full bg-white/90 backdrop-blur border border-cyan-300 rounded-xl px-3 py-2 text-sm font-bold text-gray-800 focus:outline-none focus:ring-4 focus:ring-cyan-200 focus:border-cyan-500 cursor-pointer transition-all">
+                        @foreach ($fechasInstalacion2 as $fecha)
+                            <option value="{{ $fecha }}" {{ $loop->first ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::parse($fecha)->format('d/m/Y') }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
-
-
     </div>
+</header>
 
-</div>
-
-
+<!-- Scripts (sin cambios) -->
 <script>
     function mostrarInformacion(fechaSeleccionada) {
-        var items = document.getElementsByClassName('item-info');
-        for (var i = 0; i < items.length; i++) {
-            var itemFecha = items[i].getAttribute('data-fecha-instalacion2');
-            if (itemFecha === fechaSeleccionada) {
-                items[i].style.display = 'block';
-            } else {
-                items[i].style.display = 'none';
-            }
-        }
+        document.querySelectorAll('.item-info').forEach(item => {
+            item.style.display = item.dataset.fechaInstalacion2 === fechaSeleccionada ? 'block' : 'none';
+        });
     }
-</script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var primeraFecha = document.getElementById('fechaInstalacion2').value;
-        mostrarInformacion(primeraFecha);
-        
+    function goBack() {
+        window.history.back();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const primeraFecha = document.getElementById('fechaInstalacion2').value;
+        if (primeraFecha) mostrarInformacion(primeraFecha);
     });
 </script>
-

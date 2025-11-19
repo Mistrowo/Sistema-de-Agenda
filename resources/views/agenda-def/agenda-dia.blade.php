@@ -1,282 +1,232 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset='utf-8'>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link href="{{ asset('css/calendario-dia.css') }}" rel="stylesheet">
-        <link rel="icon" href="{{ asset('imagenes/descarga.png') }}" type="image/png">
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="{{ asset('imagenes/descarga.png') }}" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        <link href="https://clientes.ohffice.cl/css/coreui.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet">
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </head>
-    
-  
-<body>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'p-blue': '#dbeafe',
+                        'p-green': '#d1fae5',
+                        'p-yellow': '#fef3c7',
+                        'p-pink': '#fce7f3',
+                        'p-purple': '#f3e8ff',
+                        'p-gray': '#f8fafc',
+                        'p-darkblue': '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
 
+    <style>
+        table { table-layout: fixed; width: 100%; }
+        th, td { width: 12.5%; }
+        th:first-child, td:first-child { width: 12.5%; }
+        .item-card { min-height: 78px; }
+    </style>
+</head>
 
-  <div class="container">
-    <div class="main-title">
-      Calendario Instalaciones Diario
+<body class="bg-p-gray min-h-screen">
 
-      <div class="date-and-button">
-        <div id="current-date" class="current-date"></div>
+    <!-- HEADER COMPACTO Y ELEGANTE -->
+    <div class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-4 py-3 flex items-center justify-between">
+            <h1 class="text-lg font-bold text-gray-800">Calendario Día</h1>
 
-    
-        <button id="next-day-button" class="next-day-button">
-            <i class="fas fa-arrow-right"></i>
-        </button>
+            <div class="flex items-center gap-3 bg-p-blue/50 rounded-full px-5 py-1.5">
+                <button id="prev-day" class="text-p-darkblue hover:bg-white/60 p-1.5 rounded-full transition">
+                    <i class="fas fa-chevron-left text-sm"></i>
+                </button>
+                <div id="current-date" class="font-bold text-p-darkblue text-base min-w-[160px] text-center leading-tight"></div>
+                <button id="next-day" class="text-p-darkblue hover:bg-white/60 p-1.5 rounded-full transition">
+                    <i class="fas fa-chevron-right text-sm"></i>
+                </button>
+            </div>
 
-        <button id="prev-day-button" class="prev-day-button">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <a href="{{ route('calendariosemana') }}">
-            <button id="week-button" class="week-button"> Por Semana</button>
-        </a>
-
-
-        <a href="{{ route('calendario') }}" class="back-button" title="Volver">
-            <i class="fas fa-home"></i>
-            <span class="tooltip-text">Volver al Inicio</span>
-        </a>
-        
-    </div>
-    
-    </div>
-  </div>
-  
-  
-    
-
-
-      
-        
-
-
-       
-
-
-
-  
-        
-      
-
-        <div class="schedule-container">
-          <div class="schedule-header">
-
-            <div class="header-item  ">BLOQUE</div>
-            <div class="header-item" >DIEGO</div>
-            <div class="header-item">FRANCO</div>
-            <div class="header-item">GABRIEL</div>
-            <div class="header-item">JONATHAN</div>
-            <div class="header-item">VOLANTE</div>
-            <div class="header-item">ILESA</div>
-            <div class="header-item">BODEGA</div>
-            <div class="header-item  ">KHEMNOVA</div>
-            <div class="header-item ">SAN JOAQUIN</div>
-            <div class="header-item  ">STORETEK</div>
-
-
-          </div>
-   
-          @foreach ($bloques as $bloque)
-          <div class="schedule-row">
-              <div class="time-block">  {{ $bloquesHorarios[$bloque] }}</div>
-              @foreach ($instaladores as $index => $instalador)
-                  @php  
-                      $itemsEnBloque = $agendaItems->filter(function ($item) use ($instalador, $bloque) {
-                          return $item->bloque == $bloque && $item->instalador == $instalador;
-                      });
-                  @endphp
-                  <div class="data-block" id="bloque-{{ strtolower($bloque) }}-{{ $index + 1 }}">
-                      @foreach ($itemsEnBloque as $item)
-                          @php
-                              $clasesEstado = [
-                                  'Calendarizado' => 'estado-calendarizado',
-                                  'En espera' => 'estado-en-espera',
-                                  'Post-Venta' => 'estado-post-venta'
-                              ];
-                              $claseEstado = $clasesEstado[$item->estado] ?? 'alguna-clase-default';
-                          @endphp
-                          <div class="{{ $claseEstado }}">
-                            <div class="item-info" data-fecha-instalacion2="{{ $item->fecha_instalacion2 }}" data-nota-venta="{{ $item->nota_venta }}" data-instalador="{{ $instalador }}" data-bloque="{{ $bloque }}" data-descripcion="{{ $item->calendarioDef->descripcion }}" data-transportista="{{ $item->transportista }}" data-observacion="{{ $item->observacion_bloque }}" data-nota-resumida="{{ $item->nota_resumida }}" data-estado="{{ $item->estado }}" data-original-bloque="{{ $bloque }}" data-original-instalador="{{ $instalador }}">
-                              NV:{{ $item->nota_venta }}<br>
-                              Cliente:{{ $item->calendarioDef->cliente }}
-                              @if (!in_array($instalador, ['STORETEK', 'KHEMNOVA', 'SAN JOAQUIN']))
-                                <div class="edit-icon-container">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </div>
-                            @endif
-                          </div>
-                          
-                          
-                          
-                          </div>
-                      @endforeach
-                  </div>
-              @endforeach
-          </div>
-      @endforeach
-      
-      
-
-        </div>
-      
-
-
-
-    
-        <div class="modal" id="miModal">
-            <div class="modal-content">
-                <span class="close-button" onclick="cerrarModal()"></span>
-                <div class="modal-header">
-                    <div class="modal-title">
-                        <h2>LECTURA AGENDA INSTALACIONES</h2>
-                    </div>
-                    <div class="modal-meta">
-                        <span>Fecha: <strong>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</strong></span>
-                        <span>Usuario: <strong>{{ session('usuario') ? session('usuario')->NOMBRE : 'Usuario no autenticado' }}</strong></span>
-                    </div>
-                    <div class="edit-icon-modal">
-                      <i class="fas fa-pencil-alt" ></i>
-                  </div>
-                  
-                  
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-row">
-                      <div class="form-field third-width">
-                        <label for="notaVenta">Nota Venta</label>
-                        <input type="text" id="notaVenta" placeholder="N°" readonly >
-                      </div> 
-                      <div class="form-field third-width">
-                        <label for="descripcion">Descripción</label>
-                        <input type="text" id="descripcionModal"  readonly>
-                      </div>
-                      <div class="form-field third-width">
-                        <label for="fechaEntrega">Fecha Entrega</label>
-                        <input type="date" id="fechaEntregaModal" readonly>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-field third-width">
-                        <label for="transportista">Transportista</label>
-                        <input type="text" id="transportista">
-                      </div>
-                      <div class="form-field third-width">
-                        <label for="instalador">Instalador</label>
-                        <select id="instalador" class="form-control">
-                            <option value="DIEGO">DIEGO</option>
-                            <option value="JONATHAN">JONATHAN</option>
-                            <option value="FRANCO">FRANCO</option>
-                            <option value="VOLANTE">VOLANTE</option>
-                            <option value="BODEGA">BODEGA</option>
-                            <option value="ILESA">ILESA</option>
-                            <option value="GABRIEL">GABRIEL</option>
-
-                        </select>
-                    </div>
-                    <div class="form-field third-width">
-                      <label for="horaBloque">Hora/Bloque</label>
-                      <select name="bloque" id="horaBloque" class="form-control">
-                          <option value="A-1">A-1</option>
-                          <option value="A-2">A-2</option>
-                          <option value="A-3">A-3</option>
-                          <option value="A-4">A-4</option>
-                          <option value="A-5">A-5</option>
-                          <option value="A-6">A-6</option>
-                          <option value="A-7">A-7</option>
-                          <option value="A-8">A-8</option>
-                      </select>
-                  </div>
-                    </div>
-                    <div class="form-row">
-
-                      <div class="form-field half-width">
-                        <label for="observaciones2">Nota Resumida</label>
-                        <textarea id="observaciones3" maxlength="60"></textarea>
-                      </div>
-                      <div class="form-field half-width">
-                        <label for="observaciones1">Observación</label>
-                        <textarea id="observaciones1" readonly></textarea>
-                    </div>
-                     
-                    </div>
-                  </div>
-
-
-
-                
-                  
-                  <div class="modal-section1">
-                    <div class="modal-status">
-                        <label for="observaciones">Estado de la Instalación</label>
-                        <div class="status-indicators">
-                            <div class="status-indicator">
-                                <input type="checkbox" id="confirmedCheckbox" name="status" value="Calendarizado" >
-                                <label for="confirmedCheckbox">
-                                    <div class="indicator-color confirmed"></div>
-                                    <div class="indicator-text">Despacho Confirmado</div>
-                                </label>
-                            </div>
-                            <div class="status-indicator">
-                                <input type="checkbox" id="pendingCheckbox" name="status" value="En espera" >
-                                <label for="pendingCheckbox">
-                                    <div class="indicator-color pending"></div>
-                                    <div class="indicator-text">Por Confirmar</div>
-                                </label>
-                            </div>
-                            <div class="status-indicator">
-                                <input type="checkbox" id="postSaleCheckbox" name="status" value="Post-Venta" >
-                                <label for="postSaleCheckbox">
-                                    <div class="indicator-color post-sale"></div>
-                                    <div class="indicator-text">Post Venta</div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-               
+            <div class="flex gap-2">
+                <a href="{{ route('calendariosemana') }}">
+                    <button class="bg-p-green hover:bg-green-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                        Vista Semanal
+                    </button>
+                </a>
+                <a href="{{ route('calendario') }}">
+                    <button class="bg-gradient-to-r from-p-darkblue to-blue-600 hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                        Inicio
+                    </button>
+                </a>
             </div>
         </div>
-        
 
+         <div class="flex flex-wrap items-center gap-3 justify-center text-xs">
+            <span class="font-semibold text-gray-700">
+                <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                Leyenda:
+            </span>
+            
+            <div class="flex items-center gap-1.5 bg-blue-100 px-2 py-1 rounded border border-blue-300">
+                <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                <span class="font-medium text-blue-800">Calendarizado</span>
+            </div>
+            
+            <div class="flex items-center gap-1.5 bg-red-100 px-2 py-1 rounded border border-red-300">
+                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                <span class="font-medium text-red-800">En Espera</span>
+            </div>
+            
+            <div class="flex items-center gap-1.5 bg-green-100 px-2 py-1 rounded border border-green-300">
+                <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                <span class="font-medium text-green-800">Post Venta</span>
+            </div>
+        </div>
+    </div>
 
+    <!-- TABLA PRINCIPAL -->
+    <div class="px-4 py-6">
+        <div class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+            <table class="w-full table-fixed">
+                <thead class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800">
+                    <tr>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">Bloque</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">DIEGO</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">FRANCO</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">GABRIEL</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">JONATHAN</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">VOLANTE</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">ILESA</th>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">BODEGA</th>
+                    </tr>
+                </thead>
 
+                <tbody class="divide-y divide-gray-100">
+                    @foreach ($bloques as $bloque)
+                        @php
+                            $horario = $bloquesHorarios[$bloque] ?? $bloque;
+                            $items = $agendaItems->where('bloque', $bloque);
+                        @endphp
 
-     
-</div>    
+                        <tr class="hover:bg-p-gray/50 transition">
+                            <td class="px-4 py-5 text-center font-medium bg-p-blue/30 border-r border-gray-200">
+                                <div class="text-sm font-bold text-gray-800">{{ $horario }}</div>
+                                <div class="text-xs text-gray-600">{{ $bloque }}</div>
+                            </td>
 
+                            @foreach(['DIEGO','FRANCO','GABRIEL','JONATHAN','VOLANTE','ILESA','BODEGA'] as $instalador)
+                                @php
+                                    $itemsInstalador = $items->where('instalador', $instalador);
+                                @endphp
+                                <td class="p-3 align-top border-r border-gray-200">
+                                    <div class="space-y-2">
+                                        @foreach($itemsInstalador as $item)
+                                            @php
+                                                $bg = match($item->estado) {
+                                                    'Calendarizado' => 'bg-p-green border-green-400 text-green-900',
+                                                    'En espera'     => 'bg-p-yellow border-amber-400 text-amber-900',
+                                                    'Post-Venta'    => 'bg-p-pink border-pink-400 text-pink-900',
+                                                    default         => 'bg-gray-100 border-gray-400 text-gray-700'
+                                                };
+                                            @endphp
 
-<script>
-  $(document).ready(function() {
-      $('[data-toggle="tooltip"]').tooltip();
-  });
-</script>    
+                                            <div 
+                                                class="item-card rounded-lg border-2 {{ $bg }} p-3 shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
+                                                onclick="abrirModal(@json($item))">
+                                                <div class="text-xs font-bold text-gray-800">
+                                                    NV: {{ $item->nota_venta }}
+                                                </div>
+                                                <div class="text-xs truncate text-gray-700 mt-1">
+                                                    {{ Str::limit($item->calendarioDef->cliente ?? '', 22) }}
+                                                </div>
+                                                @if($item->nota_resumida)
+                                                    <div class="text-[10px] italic text-gray-600 mt-1 truncate">
+                                                        {{ Str::limit($item->nota_resumida, 32) }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<script src="/js/calendario-dia.js"></script>
+    <!-- LEYENDA -->
+   
 
+    <!-- MODAL -->
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full">
+            <div class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800 p-5 rounded-t-2xl">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Editar Instalación</h3>
+                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="p-2 hover:bg-white/30 rounded-lg">
+                        ×
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 space-y-4" id="modal-body"></div>
+        </div>
+    </div>
 
-  
+    <script>
+        const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        let fecha = new Date();
+
+        function actualizarFecha() {
+            const dia = fecha.getDate();
+            const mes = meses[fecha.getMonth()];
+            const año = fecha.getFullYear();
+            document.getElementById('current-date').innerHTML = `${dia} ${mes} ${año}`;
+        }
+
+        document.getElementById('prev-day').onclick = () => { fecha.setDate(fecha.getDate() - 1); actualizarFecha(); filtrar(); };
+        document.getElementById('next-day').onclick = () => { fecha.setDate(fecha.getDate() + 1); actualizarFecha(); filtrar(); };
+
+        function filtrar() {
+            const hoy = fecha.toISOString().slice(0,10);
+            document.querySelectorAll('.item-card').forEach(card => {
+                try {
+                    const item = JSON.parse(card.getAttribute('onclick').match(/\((.*)\)/)[1]);
+                    card.style.display = item.fecha_instalacion2 === hoy ? 'block' : 'none';
+                } catch(e) {}
+            });
+        }
+
+        function abrirModal(item) {
+            document.getElementById('modal-body').innerHTML = `
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><strong>NV:</strong> ${item.nota_venta}</div>
+                    <div><strong>Cliente:</strong> ${item.calendarioDef.cliente}</div>
+                    <div><strong>Fecha:</strong> ${item.fecha_instalacion2}</div>
+                    <div><strong>Estado:</strong> <span class="px-2 py-1 rounded text-xs font-medium ${
+                        item.estado === 'Calendarizado' ? 'bg-p-green text-green-900' : 
+                        item.estado === 'En espera' ? 'bg-p-yellow text-amber-900' : 
+                        'bg-p-pink text-pink-900'
+                    }">${item.estado}</span></div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium mb-1">Nota Resumida</label>
+                    <textarea class="w-full p-3 border rounded-lg" rows="2">${item.nota_resumida || ''}</textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm">Cancelar</button>
+                    <button class="px-8 py-2 bg-gradient-to-r from-p-darkblue to-blue-600 text-white rounded-lg font-medium text-sm">Guardar</button>
+                </div>
+            `;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        actualizarFecha();
+        filtrar();
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
