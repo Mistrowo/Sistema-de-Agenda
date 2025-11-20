@@ -1,66 +1,284 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📅 Sistema de Gestión de Instalaciones - Ohffice
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web desarrollado en **Laravel** para la gestión integral de instalaciones, agendamiento de servicios y seguimiento de notas de venta integrado con **Softland ERP**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Características Principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 📊 Gestión de Calendario
+- **Vista Diaria**: Visualización de instalaciones por bloques horarios (A-1 a A-8)
+- **Vista Semanal**: Planificación semanal de instalaciones
+- **Vista de Listado**: Administración completa de notas de venta
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👥 Roles de Usuario
+1. **Administrador (ROL 1)**: Acceso completo al sistema
+2. **Khemnova (ROL 2)**: Vista específica para instaladores externos
+3. **Instalador (ROL 3)**: Vista personalizada de agenda individual
 
-## Learning Laravel
+### 🔄 Integración con Softland
+- Sincronización automática de notas de venta
+- Actualización en tiempo real de estados
+- Gestión de clientes y productos desde ERP
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 📱 Funcionalidades Clave
+- ✅ Asignación de instaladores por bloques horarios
+- ✅ Gestión de estados (Calendarizado, En Espera, Post-Venta)
+- ✅ Asignación múltiple de fechas e instaladores
+- ✅ Sistema de notas y observaciones
+- ✅ Filtros avanzados por fecha y estado
+- ✅ Interfaz responsive con Tailwind CSS
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Tecnologías
 
-## Laravel Sponsors
+### Backend
+- **Framework**: Laravel 10.x
+- **PHP**: 8.1+
+- **Base de Datos**: MySQL (principal) + SQL Server (Softland)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Frontend
+- **CSS Framework**: Tailwind CSS 3.x
+- **JavaScript**: Vanilla JS con jQuery
+- **Iconos**: Font Awesome 6.x
+- **Alertas**: SweetAlert2
 
-### Premium Partners
+### Dependencias Principales
+```json
+{
+  "laravel/framework": "^10.0",
+  "carbon": "^2.0",
+  "tailwindcss": "^3.0"
+}
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 📦 Instalación
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Requisitos Previos
+- PHP >= 8.1
+- Composer
+- MySQL
+- SQL Server (para integración con Softland)
+- Node.js y NPM
 
-## Code of Conduct
+### Pasos de Instalación
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/tu-usuario/ohffice-instalaciones.git
+cd ohffice-instalaciones
+```
 
-## Security Vulnerabilities
+2. **Instalar dependencias PHP**
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Instalar dependencias JavaScript**
+```bash
+npm install
+```
 
-## License
+4. **Configurar variables de entorno**
+```bash
+cp .env.example .env
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Editar `.env` con tus credenciales:
+```env
+# Base de datos principal (MySQL)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ohffice_instalaciones
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Base de datos Softland (SQL Server)
+DB_HOST_SOFT=servidor_softland
+DB_PORT_SOFT=1433
+DB_DATABASE_SOFT=softland_db
+DB_USERNAME_SOFT=usuario_soft
+DB_PASSWORD_SOFT=password_soft
+```
+
+5. **Generar key de la aplicación**
+```bash
+php artisan key:generate
+```
+
+6. **Ejecutar migraciones**
+```bash
+php artisan migrate
+```
+
+7. **Compilar assets**
+```bash
+npm run build
+```
+
+8. **Iniciar servidor de desarrollo**
+```bash
+php artisan serve
+```
+
+La aplicación estará disponible en `http://localhost:8000`
+
+---
+
+## 🗄️ Estructura de Base de Datos
+
+### Tablas Principales
+
+#### `agenda_def`
+Almacena las asignaciones de instalaciones:
+- `nota_venta`: Folio de la nota de venta
+- `instalador`: Nombre del instalador asignado
+- `bloque`: Bloque horario (A-1 a A-8)
+- `fecha_instalacion2`: Fecha programada
+- `estado`: Estado de la instalación
+- `observacion_bloque`: Observaciones
+- `nota_resumida`: Nota visible en agenda
+- `transportista`: Transportista asignado
+
+#### `calendario_def` (Legacy)
+Tabla anterior de calendario (en proceso de migración)
+
+#### Integración Softland
+**Vista/Tabla**: `NotaVta_Actualiza`
+- Conexión SQL Server
+- Lectura de notas de venta en tiempo real
+- Campos principales: `nv_folio`, `nv_cliente`, `nv_descripcion`, `nv_estado`
+
+---
+
+## 🎯 Uso del Sistema
+
+### Login
+Acceder a `/` con credenciales:
+- Email del sistema
+- Contraseña
+
+### Roles y Rutas
+
+#### Administrador (ROL 1)
+- `/calendario-def/calendario` - Listado de notas de venta
+- `/agenda-def/detalle-softland/{folio}` - Detalle de instalación
+- `/agenda-def/agenda-dia` - Vista diaria
+- `/agenda-def/agenda-semana` - Vista semanal
+
+#### Khemnova (ROL 2)
+- `/calendario-def/calendario/Khemnova` - Listado Khemnova
+- `/agenda-def/detalle-softland-khem/{folio}` - Detalle Khemnova
+
+#### Instalador (ROL 3)
+- `/calendario-def/calendarioinstalador` - Mi calendario
+- `/agenda-def/detalle-softland-instalador/{folio}` - Mi agenda
+
+---
+
+## 🔧 Configuración
+
+### Bloques Horarios
+```php
+'A-1' => '08:00-10:00'
+'A-2' => '10:00-12:00'
+'A-3' => '12:00-14:00'
+'A-4' => '14:00-16:00'
+'A-5' => '16:00-18:00'
+'A-6' => '18:00-20:00'
+'A-7' => '20:00-22:00'
+'A-8' => '22:00-24:00'
+```
+
+### Estados de Instalación
+- **Calendarizado**: Instalación confirmada y agendada
+- **En Espera**: Pendiente de confirmación
+- **Post-Venta**: Servicio post-instalación
+
+---
+
+## 📱 Capturas de Pantalla
+
+### Vista de Calendario Diario
+Visualización de instalaciones por bloques horarios con código de colores según estado.
+
+### Vista de Listado
+Tabla completa de notas de venta con filtros avanzados y estado de agendamiento.
+
+### Modal de Asignación
+Interfaz intuitiva para asignar instaladores, fechas y bloques horarios.
+
+---
+
+## 🤝 Contribución
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+---
+
+## 📝 Notas Importantes
+
+### Migración desde CalendarioDef
+El sistema está en proceso de migración de `calendario_def` a integración directa con Softland. Las nuevas funcionalidades usan:
+- `TablaSoftland::class` para lectura de notas
+- `AgendaDef::class` para gestión de instalaciones
+
+### Relación de Modelos
+```php
+// AgendaDef obtiene cliente desde Softland
+public function notaVentaSoftland() {
+    return $this->belongsTo(TablaSoftland::class, 'nota_venta', 'nv_folio');
+}
+
+// Accessor para cliente
+public function getClienteAttribute() {
+    return $this->notaVentaSoftland?->nv_cliente ?? 'Sin cliente';
+}
+```
+
+---
+
+## 🐛 Resolución de Problemas
+
+### Error de conexión a Softland
+Verificar credenciales en `.env` y que el servidor SQL Server sea accesible.
+
+### Cliente no aparece en agenda
+Asegurar que existe relación `notaVentaSoftland` y usar el accessor `$item->cliente`.
+
+### Fechas no se filtran correctamente
+Verificar formato de fecha en consultas (usar solo fecha sin hora).
+
+---
+
+## 📄 Licencia
+
+Este proyecto es propiedad de **Ohffice** y su uso está restringido según los términos establecidos por la empresa.
+
+---
+
+## 👨‍💻 Equipo de Desarrollo
+
+Desarrollado para **Ohffice**  
+Sistema de Gestión de Instalaciones
+
+---
+
+## 📞 Soporte
+
+Para soporte técnico o consultas, contactar al equipo de desarrollo interno de Ohffice.
+
+---
+
+**Versión**: 2.0  
+**Última Actualización**: Noviembre 2025
