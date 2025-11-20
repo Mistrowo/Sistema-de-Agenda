@@ -50,10 +50,10 @@
     
     <!-- Modales (Comentados temporalmente - Modernizar por sección) -->
     @include('components.agenda1.modal-principal')
-    {{-- @include('components.agenda1.modal') --}}
-    {{-- @include('components.agenda1.modal-calendario') --}}
-    {{-- @include('components.agenda1.modalaux') --}}
-    {{-- @include('components.agenda1.modalauxcalendario') --}}
+    @include('components.agenda1.modal')
+     @include('components.agenda1.modal-calendario') 
+     @include('components.agenda1.modalaux') 
+     @include('components.agenda1.modalauxcalendario') 
 
     <!-- JavaScript Principal -->
     <script src="{{ asset('js/calendario.js') }}"></script>

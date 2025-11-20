@@ -1,12 +1,11 @@
 <!-- Modal Principal - Lectura Agenda Instalaciones -->
-<div class="modal fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto" id="miModal" style="display: none;">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        
+<div class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center overflow-y-auto p-4" id="miModal" style="display: none;">
+<div class="w-full max-w-6xl">       
         <!-- Contenedor del Modal -->
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
-            
+        
             <!-- Header del Modal -->
-            <div class="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-4">
+            <div class="bg-gradient-to-r from-blue-800 to-white-700 text-white px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="bg-white bg-opacity-20 rounded-lg p-2">
@@ -39,12 +38,7 @@
                             <span>Guardar</span>
                         </button>
 
-                        <!-- Botón Editar -->
-                        <button type="button" id="botoneditar"
-                                class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm hover:shadow-md font-medium text-sm">
-                            <i class="fas fa-pencil-alt"></i>
-                            <span>Editar</span>
-                        </button>
+                       
 
                         <!-- Botón Eliminar -->
                         <button type="button" id="botonEliminar"
@@ -88,21 +82,7 @@
                             <input type="hidden" id="bloqueAntiguo" name="bloque_antiguo">
                         </div>
 
-                        <!-- Transportista -->
-                        <div>
-                            <label for="transportista" class="block text-xs font-semibold text-slate-600 mb-1.5">
-                                Transportista
-                            </label>
-                            <div class="relative">
-                                <input type="text" name="transportista" id="transportista" 
-                                       value="{{ $transportista ?? 'No definido' }}"
-                                       class="w-full px-3 py-2.5 pr-10 bg-white border border-slate-300 rounded-lg focus:border-slate-500 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm">
-                                <button type="button" data-toggle="modal" data-target="#modalTransporteNuevo"
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-                                    <i class="fas fa-search text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
+                     
 
                         <!-- Nota Venta -->
                         <div>

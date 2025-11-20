@@ -59,7 +59,7 @@ class AgendaDefController extends Controller
             'observacion_bloque' => 'nullable|string',
             'estado' => 'required',
             'fecha_entrega' => 'nullable|date',
-            'transportista' => 'required',
+            'transportista' => 'nullable',
             'nota_resumida' => 'nullable|string',
             'nota_resumida2' => 'nullable|string',
             'fecha_instalacion2' => 'required|date',
@@ -1059,7 +1059,9 @@ public function obtenerEstado(Request $request){
                           ->where('instalador', $instalador)
                           ->where('fecha_instalacion2', $fechaInstalacion2)
                           ->first();
-    $estado = $agendaDef ? $agendaDef->estado : 'Completar Campo';
+    
+    // Si no encuentra registro, devolver null en lugar de "Completar Campo"
+    $estado = $agendaDef ? $agendaDef->estado : null;
 
     return response()->json([
         'bloque' => $bloque,
@@ -1069,18 +1071,16 @@ public function obtenerEstado(Request $request){
 }
 
 
-
 public function obtenerEstado2(Request $request){
     $bloque = $request->input('bloque');
     $instaladorNombre = session('usuario')->NOMBRE;
-
     $fechaInstalacion2 = $request->input('fecha_instalacion2');
 
     $agendaDef = AgendaDef::where('bloque', $bloque)
                           ->where('instalador', $instaladorNombre)
                           ->where('fecha_instalacion2', $fechaInstalacion2)
                           ->first();
-    $estado = $agendaDef ? $agendaDef->estado : 'Completar Campo';
+    $estado = $agendaDef ? $agendaDef->estado : null; // ✅ null en lugar de 'Completar Campo'
 
     return response()->json([
         'bloque' => $bloque,
@@ -1088,7 +1088,6 @@ public function obtenerEstado2(Request $request){
         'estado' => $estado
     ]);
 }
-
 
 /**
  * Mostrar detalle de nota de venta desde Softland (Admin)

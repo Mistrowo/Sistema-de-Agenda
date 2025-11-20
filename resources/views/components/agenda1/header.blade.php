@@ -119,6 +119,12 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Inputs ocultos para JavaScript -->
+<input type="hidden" id="notaVentaNum" value="{{ $calendarioDef->nota_venta ?? '' }}">
+<input type="hidden" id="clienteNombre" value="{{ $calendarioDef->cliente ?? '' }}">
+<input type="hidden" id="descripcion" value="{{ $calendarioDef->descripcion ?? '' }}">
 </header>
 
 <!-- Scripts (sin cambios) -->
