@@ -23,5 +23,19 @@ class AgendaDef extends Model
         'fecha_instalacion2'
     ];
 
-    
+    /**
+     * ✅ Relación con TablaSoftland para obtener datos del cliente
+     */
+    public function notaVentaSoftland()
+    {
+        return $this->belongsTo(\App\Models\TablaSoftland::class, 'nota_venta', 'nv_folio');
+    }
+
+    /**
+     * ✅ Accessor para obtener el cliente directamente
+     */
+    public function getClienteAttribute()
+    {
+        return $this->notaVentaSoftland?->nv_cliente ?? 'Sin cliente';
+    }
 }

@@ -28,7 +28,7 @@
 
     <style>
         table { table-layout: fixed; width: 100%; }
-        th, td { width: 14.28%; } /* 7 columnas: bloque + 6 días */
+        th, td { width: 14.28%; }
         th:first-child, td:first-child { width: 14.28%; }
         .item-card {
             min-height: 76px;
@@ -50,7 +50,6 @@
 
 <body class="bg-p-gray min-h-screen">
 
-    <!-- HEADER EXACTAMENTE IGUAL AL DEL CALENDARIO DIARIO -->
     <div class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div class="px-4 py-3 flex items-center justify-between">
             <h1 class="text-lg font-bold text-gray-800">Calendario Semanal</h1>
@@ -79,7 +78,7 @@
             </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 justify-center text-xs">
+        <div class="flex flex-wrap items-center gap-3 justify-center text-xs py-2">
             <span class="font-semibold text-gray-700">
                 <i class="fas fa-info-circle text-blue-500 mr-1"></i>
                 Leyenda:
@@ -102,38 +101,35 @@
         </div>
     </div>
 
-    </div>
-
-    <!-- TABLA SEMANAL – MISMO ESTILO QUE LA VISTA DIARIA -->
+    <!-- TABLA SEMANAL -->
     <div class="px-4 py-6">
         <div class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
             <table class="w-full table-fixed">
-             <thead class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800">
-    <tr>
-        <th class="px-4 py-4 text-xs font-bold uppercase">Bloque</th>
-        @foreach ($weekDates as $fechaCompleta)
-            @php
-                // Quitamos el día de la semana (lunes, martes, etc.) y nos quedamos solo con la fecha
-                $fecha = trim(substr($fechaCompleta, strpos($fechaCompleta, ',') !== false ? strpos($fechaCompleta, ',') + 1 : 0));
-                $carbon = \Carbon\Carbon::parse($fecha);
+                <thead class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800">
+                    <tr>
+                        <th class="px-4 py-4 text-xs font-bold uppercase">Bloque</th>
+                        @foreach ($weekDates as $fechaCompleta)
+                            @php
+                                $fecha = trim(substr($fechaCompleta, strpos($fechaCompleta, ',') !== false ? strpos($fechaCompleta, ',') + 1 : 0));
+                                $carbon = \Carbon\Carbon::parse($fecha);
 
-                $diaEs = [
-                    'Monday'    => 'LUNES',
-                    'Tuesday'   => 'MARTES',
-                    'Wednesday' => 'MIÉRCOLES',
-                    'Thursday'  => 'JUEVES',
-                    'Friday'    => 'VIERNES',
-                    'Saturday'  => 'SÁBADO',
-                    'Sunday'    => 'DOMINGO'
-                ][$carbon->format('l')];
-            @endphp
-            <th class="px-4 py-4 text-xs font-bold uppercase text-center">
-                {{ $diaEs }}<br>
-                <span class="text-[10px] opacity-80">{{ $carbon->format('d/m') }}</span>
-            </th>
-        @endforeach
-    </tr>
-</thead>
+                                $diaEs = [
+                                    'Monday'    => 'LUNES',
+                                    'Tuesday'   => 'MARTES',
+                                    'Wednesday' => 'MIÉRCOLES',
+                                    'Thursday'  => 'JUEVES',
+                                    'Friday'    => 'VIERNES',
+                                    'Saturday'  => 'SÁBADO',
+                                    'Sunday'    => 'DOMINGO'
+                                ][$carbon->format('l')];
+                            @endphp
+                            <th class="px-4 py-4 text-xs font-bold uppercase text-center">
+                                {{ $diaEs }}<br>
+                                <span class="text-[10px] opacity-80">{{ $carbon->format('d/m') }}</span>
+                            </th>
+                        @endforeach
+                    </tr>
+                </thead>
 
                 <tbody class="divide-y divide-gray-100">
                     @php
@@ -156,44 +152,46 @@
                                 <div class="text-xs text-gray-600">{{ $bloque }}</div>
                             </td>
 
-                         @foreach ($weekDates as $index => $fechaCompleta)
-    @php
-        // Extraemos solo la fecha limpia (2025-11-17)
-        $fechaDia = trim(substr($fechaCompleta, strpos($fechaCompleta, ',') !== false ? strpos($fechaCompleta, ',') + 1 : 0));
+                            @foreach ($weekDates as $index => $fechaCompleta)
+                                @php
+                                    $fechaDia = trim(substr($fechaCompleta, strpos($fechaCompleta, ',') !== false ? strpos($fechaCompleta, ',') + 1 : 0));
 
-        $itemsDiaBloque = $agendaItems
-            ->where('fecha_instalacion2', $fechaDia)
-            ->where('bloque', $bloque);
+                                    $itemsDiaBloque = $agendaItems
+                                        ->where('fecha_instalacion2', $fechaDia)
+                                        ->where('bloque', $bloque);
+                                @endphp
+
+                                <td class="p-3 align-top border-r border-gray-200">
+                                    <div class="space-y-2">
+                                       @foreach($itemsDiaBloque as $item)
+    @php
+        $colorClass = match($item->estado) {
+            'Calendarizado' => 'bg-p-blue border-blue-400 text-blue-900',
+            'En espera'     => 'bg-p-pink border-amber-400 text-amber-900',
+            'Post-Venta'    => 'bg-p-green border-green-400 text-green-900',
+            default         => 'bg-gray-100 border-gray-400 text-gray-700'
+        };
+        
+        $cliente = $item->notaVentaSoftland?->nv_cliente ?? $item->cliente ?? $item->nombre_cliente ?? 'Sin cliente';
     @endphp
 
-    <td class="p-3 align-top border-r border-gray-200">
-        <div class="space-y-2">
-            @foreach($itemsDiaBloque as $item)
-                @php
-                    $colorClass = match($item->estado) {
-                        'Calendarizado' => 'bg-p-green border-green-400 text-green-900',
-                        'En espera'     => 'bg-p-yellow border-amber-400 text-amber-900',
-                        'Post-Venta'    => 'bg-p-pink border-pink-400 text-pink-900',
-                        default         => 'bg-gray-100 border-gray-400 text-gray-700'
-                    };
-                @endphp
-
-                <div class="item-card rounded-lg border-2 {{ $colorClass }} shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
-                     onclick="abrirModal(@json($item))">
-                    <div class="font-bold text-gray-800 text-xs">NV: {{ $item->nota_venta }}</div>
-                    <div class="text-xs text-gray-700 truncate mt-1">
-                        {{ Str::limit($item->calendarioDef->cliente ?? 'Sin cliente', 20) }}
-                    </div>
-                    @if($item->nota_resumida)
-                        <div class="text-[10px] italic text-gray-600 mt-1 truncate">
-                            {{ Str::limit($item->nota_resumida, 30) }}
-                        </div>
-                    @endif
-                </div>
-            @endforeach
+    <div class="item-card rounded-lg border-2 {{ $colorClass }} shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
+         data-item='@json($item)'
+         onclick="abrirModalSeguro(this)">
+        <div class="font-bold text-gray-800 text-xs">NV: {{ $item->nota_venta }}</div>
+        <div class="text-xs text-gray-700 truncate mt-1">
+            {{ Str::limit($cliente, 20) }}
         </div>
-    </td>
+        @if($item->nota_resumida)
+            <div class="text-[10px] italic text-gray-600 mt-1 truncate">
+                {{ Str::limit($item->nota_resumida, 30) }}
+            </div>
+        @endif
+    </div>
 @endforeach
+                                    </div>
+                                </td>
+                            @endforeach
                         </tr>
                     @endforeach
                 </tbody>
@@ -201,10 +199,6 @@
         </div>
     </div>
 
-    <!-- LEYENDA (igual que la diaria) -->
-   
-
-    <!-- MODAL BONITO (igual que el diario) -->
     <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full">
             <div class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800 p-5 rounded-t-2xl">
@@ -217,11 +211,18 @@
         </div>
     </div>
 
-    <!-- JS PARA NAVEGACIÓN SEMANAL Y MODAL -->
     <script>
         const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
         let lunesActual = new Date();
-        lunesActual.setDate(lunesActual.getDate() - lunesActual.getDay() + 1); // Lunes de esta semana
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const fechaURL = urlParams.get('fecha');
+        
+        if (fechaURL) {
+            lunesActual = new Date(fechaURL + 'T00:00:00');
+        } else {
+            lunesActual.setDate(lunesActual.getDate() - lunesActual.getDay() + 1);
+        }
 
         function actualizarRango() {
             let dias = [];
@@ -237,47 +238,80 @@
 
         document.getElementById('prev-week-button').onclick = () => {
             lunesActual.setDate(lunesActual.getDate() - 7);
-            actualizarRango();
-            // Si usas AJAX para recarga los datos aquí
+            recargarConFecha();
         };
 
         document.getElementById('next-week-button').onclick = () => {
             lunesActual.setDate(lunesActual.getDate() + 7);
-            actualizarRango();
-            // Si usas AJAX recarga los datos aquí
+            recargarConFecha();
         };
 
-        function abrirModal(item) {
-            document.getElementById('modal-body').innerHTML = `
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>NV:</strong> ${item.nota_venta}</div>
-                    <div><strong>Cliente:</strong> ${item.calendarioDef?.cliente || 'N/A'}</div>
-                    <div><strong>Fecha:</strong> ${item.fecha_instalacion2}</div>
-                    <div><strong>Instalador:</strong> ${item.instalador || 'Sin asignar'}</div>
-                    <div><strong>Bloque:</strong> ${item.bloque}</div>
-                    <div><strong>Estado:</strong> 
-                        <span class="px-2 py-1 rounded text-xs font-bold ${
-                            item.estado === 'Calendarizado' ? 'bg-p-green text-green-900' :
-                            item.estado === 'En espera' ? 'bg-p-yellow text-amber-900' : 'bg-p-pink text-pink-900'
-                        }">${item.estado}</span>
-                    </div>
-                </div>
-                ${item.nota_resumida ? `<div class="mt-4"><strong>Nota:</strong><p class="mt-1 text-gray-700">${item.nota_resumida}</p></div>` : ''}
-                <div class="flex justify-end mt-6">
-                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="px-8 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">Cerrar</button>
-                </div>
-            `;
-            document.getElementById('modal').classList.remove('hidden');
+        function recargarConFecha() {
+            const fechaFormateada = lunesActual.toISOString().slice(0, 10);
+            const url = new URL(window.location.href);
+            url.searchParams.set('fecha', fechaFormateada);
+            window.location.href = url.toString();
         }
 
-        // Inicializar fecha
+        function abrirModalSeguro(element) {
+            try {
+                const itemJson = element.getAttribute('data-item');
+                const item = JSON.parse(itemJson);
+                abrirModal(item);
+            } catch(e) {
+                console.error('Error al abrir modal:', e);
+                alert('Error al cargar los datos del modal');
+            }
+        }
+
+      function abrirModal(item) {
+    const notaResumida = item.nota_resumida || '';
+    const notaResumida2 = item.nota_resumida2 || '';
+    const observacionBloque = item.observacion_bloque || '';
+    
+    document.getElementById('modal-body').innerHTML = `
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div><strong>NV:</strong> ${item.nota_venta || 'N/A'}</div>
+            <div><strong>Fecha:</strong> ${item.fecha_instalacion2 || 'N/A'}</div>
+            <div><strong>Instalador:</strong> ${item.instalador || 'Sin asignar'}</div>
+            <div><strong>Bloque:</strong> ${item.bloque || 'N/A'}</div>
+            <div class="col-span-2"><strong>Estado:</strong> 
+                <span class="px-2 py-1 rounded text-xs font-bold ${
+                    item.estado === 'Calendarizado' ? 'bg-p-blue text-green-900' :
+                    item.estado === 'En espera' ? 'bg-p-pink text-amber-900' : 
+                    item.estado === 'Post-Venta' ? 'bg-p-green text-pink-900' :
+                    'bg-gray-100 text-gray-700'
+                }">${item.estado || 'Sin estado'}</span>
+            </div>
+        </div>
+        ${notaResumida ? `
+            <div class="mt-4">
+                <label class="block text-sm font-medium mb-1">Nota Resumida</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${notaResumida}</textarea>
+            </div>
+        ` : ''}
+        ${notaResumida2 ? `
+            <div class="mt-2">
+                <label class="block text-sm font-medium mb-1">Nota Resumida 2</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${notaResumida2}</textarea>
+            </div>
+        ` : ''}
+        ${observacionBloque ? `
+            <div class="mt-2">
+                <label class="block text-sm font-medium mb-1">Observaciones</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${observacionBloque}</textarea>
+            </div>
+        ` : ''}
+        <div class="flex justify-end mt-6">
+            <button onclick="document.getElementById('modal').classList.add('hidden')" 
+                    class="px-8 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">
+                Cerrar
+            </button>
+        </div>
+    `;
+    document.getElementById('modal').classList.remove('hidden');
+}
         actualizarRango();
     </script>
-
-    <!-- TU JS ORIGINAL SIGUE FUNCIONANDO (solo cambiaste el HTML, no el JS) -->
-    <script>
-        var instaladoresPorFecha = @json($instaladoresPorFecha);
-    </script>
-    <script src="{{ asset('js/calendario-semana.js') }}"></script>
 </body>
 </html>

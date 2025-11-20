@@ -1,6 +1,24 @@
 <!-- Contenedor Principal - Calendario de Instalaciones (Ancho Completo) -->
 <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
     
+    @php
+        // ✅ Obtener fecha seleccionada desde URL o usar la primera disponible
+        $fechaActualSeleccionada = request()->query('fecha');
+        
+        // Si no hay fecha en URL, usar la primera fecha disponible
+        if (!$fechaActualSeleccionada && isset($fechasInstalacion2) && count($fechasInstalacion2) > 0) {
+            $fechaActualSeleccionada = $fechasInstalacion2[0];
+        }
+        
+        // Limpiar la fecha (quitar hora si existe)
+        if ($fechaActualSeleccionada && strpos($fechaActualSeleccionada, ' ') !== false) {
+            $fechaActualSeleccionada = explode(' ', $fechaActualSeleccionada)[0];
+        }
+        
+        // Debug
+        // dd('Fecha seleccionada: ' . $fechaActualSeleccionada, 'Fechas disponibles:', $fechasInstalacion2, 'Items:', $agendaItems->count());
+    @endphp
+    
     <!-- Tabla de Calendario - Ancho Completo -->
     <div class="bg-white rounded-lg shadow-lg overflow-x-auto border border-gray-200">
         
@@ -54,10 +72,22 @@
                 ] as $bloqueInfo)
                     
                     @php
-                        $notaVenta = $calendarioDef->nota_venta ?? '';
                         $instaladoresPorBloque = [];
+                        
+                        // Recorrer todos los items de la agenda
                         foreach ($agendaItems as $item) {
-                            if ($item->bloque == $bloqueInfo['bloque'] && $item->nota_venta == $notaVenta) {
+                            // Extraer fecha del item (sin hora)
+                            $itemFecha = null;
+                            if ($item->fecha_instalacion2) {
+                                $itemFecha = explode(' ', $item->fecha_instalacion2)[0];
+                            }
+                            
+                            // Verificar si coincide el bloque y la fecha
+                            if ($item->bloque == $bloqueInfo['bloque'] && $itemFecha == $fechaActualSeleccionada) {
+                                // Agrupar por instalador
+                                if (!isset($instaladoresPorBloque[$item->instalador])) {
+                                    $instaladoresPorBloque[$item->instalador] = [];
+                                }
                                 $instaladoresPorBloque[$item->instalador][] = $item;
                             }
                         }
@@ -76,9 +106,9 @@
                         <!-- Columnas de Instaladores -->
                         @foreach (['DIEGO', 'FRANCO', 'GABRIEL', 'JONATHAN', 'VOLANTE', 'ILESA', 'BODEGA'] as $index => $instalador)
                             <td class="data-block p-1 border-r border-gray-200 hover:bg-blue-50 cursor-pointer transition-all align-top" 
-                                id="bloque-{{ strtolower($bloqueInfo['bloque']) }}-{{ $index + 1 }}">
+                                id="bloque-{{ strtolower(str_replace('-', '-', $bloqueInfo['bloque'])) }}-{{ $index + 1 }}">
                                 
-                                @if (isset($instaladoresPorBloque[$instalador]))
+                                @if (isset($instaladoresPorBloque[$instalador]) && count($instaladoresPorBloque[$instalador]) > 0)
                                     @foreach ($instaladoresPorBloque[$instalador] as $item)
                                         @php
                                             $clasesEstado = [
@@ -90,19 +120,17 @@
                                         @endphp
                                         
                                         <div class="rounded p-1.5 border {{ $claseEstado }} shadow-sm hover:shadow-md transition-shadow mb-1">
-                                            <div class="item-info text-[10px] leading-tight" data-fecha-instalacion2="{{ $item->fecha_instalacion2 }}">
-                                                @if ($item->fecha_instalacion2)
-                                                    <div class="font-bold mb-0.5 truncate" title="NV: {{ $item->nota_venta }}">
-                                                        <i class="fas fa-file-alt mr-0.5"></i>{{ $item->nota_venta }}
+                                            <div class="item-info text-[10px] leading-tight">
+                                                <div class="font-bold mb-0.5 break-words" title="NV: {{ $item->nota_venta }}">
+                                                    <i class="fas fa-file-alt mr-0.5"></i>{{ $item->nota_venta }}
+                                                </div>
+                                                <div class="mb-0.5 break-words" title="{{ $item->calendarioDef->cliente ?? 'Sin cliente' }}">
+                                                    <i class="fas fa-user mr-0.5"></i>{{ $item->calendarioDef->cliente ?? 'Sin cliente' }}
+                                                </div>
+                                                @if($item->nota_resumida2 && $item->nota_resumida2 != 'Completar Campo')
+                                                    <div class="text-[9px] italic break-words" title="{{ $item->nota_resumida2 }}">
+                                                        {{ $item->nota_resumida2 }}
                                                     </div>
-                                                    <div class="mb-0.5 truncate" title="{{ $item->calendarioDef->cliente }}">
-                                                        <i class="fas fa-user mr-0.5"></i>{{ Str::limit($item->calendarioDef->cliente, 15) }}
-                                                    </div>
-                                                    @if($item->nota_resumida2)
-                                                        <div class="text-[9px] italic truncate" title="{{ $item->nota_resumida2 }}">
-                                                            {{ Str::limit($item->nota_resumida2, 20) }}
-                                                        </div>
-                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -113,38 +141,35 @@
 
                         <!-- Columna POR CONFIRMAR -->
                         <td class="data-block p-1 bg-red-50 hover:bg-red-100 cursor-pointer transition-all align-top" 
-                            id="bloque-{{ strtolower($bloqueInfo['bloque']) }}-confirmar">
+                            id="bloque-{{ strtolower(str_replace('-', '-', $bloqueInfo['bloque'])) }}-confirmar">
                             
-                            @if (isset($instaladoresPorBloque['POR CONFIRMAR']))
-                                @php
-                                    $primerItem = $instaladoresPorBloque['POR CONFIRMAR'][0];
-                                    $clasesEstado = [
-                                        'Calendarizado' => 'bg-blue-100 border-blue-300 text-blue-800',
-                                        'En espera' => 'bg-red-100 border-red-300 text-red-800',
-                                        'Post-Venta' => 'bg-green-100 border-green-300 text-green-800'
-                                    ];
-                                    $claseEstado = $clasesEstado[$primerItem->estado] ?? 'bg-gray-100 border-gray-300 text-gray-800';
-                                @endphp
-                                
-                                <div class="rounded p-1.5 border {{ $claseEstado }} shadow-sm hover:shadow-md transition-shadow">
-                                    @foreach ($instaladoresPorBloque['POR CONFIRMAR'] as $item)
-                                        <div class="item-info text-[10px] leading-tight mb-1" data-fecha-instalacion2="{{ $item->fecha_instalacion2 }}">
-                                            @if ($item->fecha_instalacion2)
-                                                <div class="font-bold mb-0.5 truncate" title="NV: {{ $item->nota_venta }}">
-                                                    <i class="fas fa-file-alt mr-0.5"></i>{{ $item->nota_venta }}
+                            @if (isset($instaladoresPorBloque['POR CONFIRMAR']) && count($instaladoresPorBloque['POR CONFIRMAR']) > 0)
+                                @foreach ($instaladoresPorBloque['POR CONFIRMAR'] as $item)
+                                    @php
+                                        $clasesEstado = [
+                                            'Calendarizado' => 'bg-blue-100 border-blue-300 text-blue-800',
+                                            'En espera' => 'bg-red-100 border-red-300 text-red-800',
+                                            'Post-Venta' => 'bg-green-100 border-green-300 text-green-800'
+                                        ];
+                                        $claseEstado = $clasesEstado[$item->estado] ?? 'bg-gray-100 border-gray-300 text-gray-800';
+                                    @endphp
+                                    
+                                    <div class="rounded p-1.5 border {{ $claseEstado }} shadow-sm hover:shadow-md transition-shadow mb-1">
+                                        <div class="item-info text-[10px] leading-tight">
+                                            <div class="font-bold mb-0.5 break-words" title="NV: {{ $item->nota_venta }}">
+                                                <i class="fas fa-file-alt mr-0.5"></i>{{ $item->nota_venta }}
+                                            </div>
+                                            <div class="mb-0.5 break-words" title="{{ $item->calendarioDef->cliente ?? 'Sin cliente' }}">
+                                                <i class="fas fa-user mr-0.5"></i>{{ $item->calendarioDef->cliente ?? 'Sin cliente' }}
+                                            </div>
+                                            @if($item->nota_resumida2 && $item->nota_resumida2 != 'Completar Campo')
+                                                <div class="text-[9px] italic break-words" title="{{ $item->nota_resumida2 }}">
+                                                    {{ $item->nota_resumida2 }}
                                                 </div>
-                                                <div class="mb-0.5 truncate" title="{{ $item->calendarioDef->cliente }}">
-                                                    <i class="fas fa-user mr-0.5"></i>{{ Str::limit($item->calendarioDef->cliente, 15) }}
-                                                </div>
-                                                @if($item->nota_resumida2)
-                                                    <div class="text-[9px] italic truncate" title="{{ $item->nota_resumida2 }}">
-                                                        {{ Str::limit($item->nota_resumida2, 20) }}
-                                                    </div>
-                                                @endif
                                             @endif
                                         </div>
-                                    @endforeach
-                                </div>
+                                    </div>
+                                @endforeach
                             @endif
                         </td>
                     </tr>
@@ -178,3 +203,82 @@
         </div>
     </div>
 </div>
+
+{{-- Script para sincronizar el selector con la URL --}}
+<script>
+(function() {
+    'use strict';
+    
+    console.log('📅 Iniciando script de calendario');
+    
+    function inicializarSelector() {
+        // Buscar el selector
+        var selector = document.getElementById('fechaInstalacion2') || 
+                      document.querySelector('select[name="fecha_instalacion2"]') ||
+                      document.querySelector('[id*="fecha"]');
+        
+        if (!selector) {
+            console.error('❌ No se encontró el selector de fecha');
+            return;
+        }
+        
+        console.log('✅ Selector encontrado:', selector.id);
+        
+        // Obtener fecha de la URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var fechaURL = urlParams.get('fecha');
+        
+        console.log('📅 Fecha en URL:', fechaURL);
+        console.log('📅 Valor actual del selector:', selector.value);
+        
+        // Si hay fecha en URL, actualizar el selector
+        if (fechaURL) {
+            // Buscar la opción correcta
+            var opciones = selector.options;
+            for (var i = 0; i < opciones.length; i++) {
+                var valorOpcion = opciones[i].value;
+                // Comparar solo la fecha (sin hora)
+                if (valorOpcion.split(' ')[0] === fechaURL.split(' ')[0]) {
+                    selector.selectedIndex = i;
+                    console.log('✅ Selector actualizado a:', valorOpcion);
+                    break;
+                }
+            }
+        }
+        
+        // Agregar evento de cambio
+        selector.addEventListener('change', function() {
+            var nuevaFecha = this.value;
+            console.log('🔄 Fecha cambiada a:', nuevaFecha);
+            
+            if (!nuevaFecha) {
+                console.log('⚠️ No hay fecha seleccionada');
+                return;
+            }
+            
+            // Extraer solo la fecha (sin hora)
+            var soloFecha = nuevaFecha.split(' ')[0];
+            
+            // Crear nueva URL
+            var url = new URL(window.location.href);
+            url.searchParams.set('fecha', soloFecha);
+            
+            console.log('🔄 Recargando con:', url.toString());
+            
+            // Recargar
+            window.location.href = url.toString();
+        });
+        
+        console.log('✅ Listener de cambio agregado');
+    }
+    
+    // Ejecutar cuando cargue el DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializarSelector);
+    } else {
+        inicializarSelector();
+    }
+})();
+</script>
+
+

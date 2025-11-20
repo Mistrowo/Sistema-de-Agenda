@@ -1,5 +1,5 @@
 <!-- Modal Selección de Días - MODERNO -->
-<div class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4" id="modalSeleccionDias">
+<div class="fixed inset-0 bg-black bg-opacity-60 z-50 items-center justify-center p-4" id="modalSeleccionDias" style="display: none;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         
         <!-- Header -->

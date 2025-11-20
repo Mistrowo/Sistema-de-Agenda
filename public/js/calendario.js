@@ -57,12 +57,16 @@ function abrirModalSeleccionDias() {
 }
 
 function cerrarModalSeleccionDias() {
-    event.preventDefault();
+    if (event) event.preventDefault();
     document.getElementById('modalSeleccionDias').style.display = 'none';
 }
-
 function abrirModalSeleccionDias1() {
     document.getElementById('modalSeleccionDias1').style.display = 'flex';
+}
+
+function cerrarModalSeleccionDias1() {
+    if (event) event.preventDefault();
+    document.getElementById('modalSeleccionDias1').style.display = 'none';
 }
 
 function confirmacionYAbrirModalSeleccionDias() {
@@ -72,8 +76,40 @@ function confirmacionYAbrirModalSeleccionDias() {
 
 function confirmacionYAbrirModalSeleccionDias1() {
     cerrarModalConfirmacionPersonalizado1();
+    
+    // ✅ GUARDAR VALORES DEL MODAL CON MANEJO DE NULOS
+    var transportistaElement = document.getElementById('transportista');
+    
+    window.datosModalTemp = {
+        notaVenta: document.getElementById('notaVenta').value,
+        transportista: transportistaElement ? (transportistaElement.value || null) : null,  // ✅ Manejo seguro
+        fechaEntrega: document.getElementById('fechaEntregaModal').value,
+        observacionBloque: document.getElementById('observaciones1').value || null,
+        observacionBloque2: document.getElementById('observaciones3').value || null,
+        observacionBloque3: document.getElementById('observaciones2').value || null,
+        estado: document.querySelector('input[name="estado"]:checked')?.value || 'Calendarizado'
+    };
+    
+    console.log('💾 Datos guardados temporalmente:', window.datosModalTemp);
+    
     abrirModalSeleccionDias1();
 }
+
+// =====================================================
+// VARIABLES GLOBALES PARA CALENDARIOS
+// =====================================================
+
+// Calendario principal (modalSeleccionDias)
+let fechaActual = new Date();
+let mesActual = fechaActual.getMonth();
+let añoActual = fechaActual.getFullYear();
+let fechasSeleccionadasGlobalmente = [];
+
+// Calendario 1 (modalSeleccionDias1)
+let fechaActual1 = new Date();
+let mesActual1 = fechaActual1.getMonth();
+let añoActual1 = fechaActual1.getFullYear();
+let fechasSeleccionadasGlobalmente1 = [];
 
 // Mapeo de bloques
 var bloqueDescripcion = {
@@ -109,12 +145,26 @@ function enviarFormularioPersonalizado() {
     var notaResumida2 = document.getElementById('observaciones3')?.value;
     var fechaInstalacion = document.getElementById('fechaInstalacionModal')?.value;
     
-    // Validaciones
-    if (!notaVenta) { alert('❌ Error: No se encontró la Nota de Venta'); return; }
-    if (!bloque) { alert('❌ Error: Por favor seleccione un Bloque'); return; }
-    if (!instalador) { alert('❌ Error: Por favor seleccione un Instalador'); return; }
-    if (!fechaInstalacion) { alert('❌ Error: Por favor seleccione la Fecha de Instalación'); return; }
-    if (!estado) { alert('❌ Error: Por favor seleccione un Estado'); return; }
+    if (!notaVenta) { 
+    Swal.fire({ icon: 'error', title: 'Error', text: 'No se encontró la Nota de Venta' });
+    return; 
+}
+if (!bloque) { 
+    Swal.fire({ icon: 'error', title: 'Error', text: 'Por favor seleccione un Bloque' });
+    return; 
+}
+if (!instalador) { 
+    Swal.fire({ icon: 'error', title: 'Error', text: 'Por favor seleccione un Instalador' });
+    return; 
+}
+if (!fechaInstalacion) { 
+    Swal.fire({ icon: 'error', title: 'Error', text: 'Por favor seleccione la Fecha de Instalación' });
+    return; 
+}
+if (!estado) { 
+    Swal.fire({ icon: 'error', title: 'Error', text: 'Por favor seleccione un Estado' });
+    return; 
+}
 
     var datosParaEnviar = {
         nota_venta: notaVenta,
@@ -149,15 +199,33 @@ function enviarFormularioPersonalizado() {
     .then(response => response.json())
    .then(data => {
     if (data.success) {
-        alert('✅ Registro guardado exitosamente');
+         Swal.fire({
+            icon: 'success',
+            title: '¡Guardado!',
+            text: 'Registro guardado exitosamente',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            window.location.reload();
+        });
         window.location.reload();
     } else {
-        alert('❌ Error: ' + (data.message || 'Error desconocido'));
+
+         Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: data.message || 'Error desconocido'
+        });
     }
 })
 .catch(error => {
     console.error('❌ Error:', error);
-    alert('❌ Error al guardar: ' + error.message);
+
+     Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar',
+        text: error.message
+    });
 })
 .finally(() => {
     // Rehabilitar botón solo si no hubo éxito
@@ -174,12 +242,13 @@ function enviarDatos() {
     cerrarModalConfirmacionPersonalizado1();
 
     var notaVenta = document.getElementById('notaVenta').value;
-    var transportista = document.getElementById('transportista').value;
+    var transportista = document.getElementById('transportista')?.value || null;
+
     var fechaEntrega = document.getElementById('fechaEntregaModal').value;
     var observacionBloque = document.getElementById('observaciones1').value;
     var observacionBloque2 = document.getElementById('observaciones3').value;
     var observacionBloque3 = document.getElementById('observaciones2').value;
-    var fechaInstalacion = document.getElementById('fechaInstalacion2').value;
+     var fechaInstalacion = document.getElementById('fechaInstalacionModal').value;
     var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
 var estado = estadoCheckbox ? estadoCheckbox.value : 'Calendarizado'; // Valor por defecto
 console.log('🔍 Estado seleccionado:', estado);
@@ -222,20 +291,61 @@ console.log('🔍 Estado seleccionado:', estado);
 }
 
 function guardarCambios() {
+    console.log('🎯 Función guardarCambios() ejecutada');
+    
     cerrarModalSeleccionDias();
     
-    var notaVenta = document.getElementById('notaVenta').value;
-    var transportista = document.getElementById('transportista').value;
-    var bloqueCompleto = document.getElementById('horaBloque').value;
-    var bloque = extraerBloque(bloqueCompleto);
-    var fechaEntrega = document.getElementById('fechaEntregaModal').value;
-    var instalador = document.getElementById('instalador').value;
-    var notaResumida = document.getElementById('observaciones2').value;
-    var observacionBloque = document.getElementById('observaciones1').value;
-    var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
-    var estado = estadoCheckbox ? estadoCheckbox.value : '';
-    var notaResumida2 = document.getElementById('observaciones3').value;
     var fechasSeleccionadas = document.getElementById('fechasSeleccionadas').value;
+    console.log('📅 Fechas del input:', fechasSeleccionadas);
+    
+    if (!fechasSeleccionadas || fechasSeleccionadas.trim() === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor seleccione al menos una fecha',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    var notaVenta = document.getElementById('notaVenta')?.value;
+    var transportista = document.getElementById('transportista')?.value || null;
+    var bloqueCompleto = document.getElementById('horaBloque')?.value;
+    
+    if (!notaVenta || !bloqueCompleto) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Faltan datos del formulario',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+    
+    var bloque = extraerBloque(bloqueCompleto);
+    var fechaEntrega = document.getElementById('fechaEntregaModal')?.value;
+    var instalador = document.getElementById('instalador')?.value;
+    var notaResumida = document.getElementById('observaciones2')?.value;
+    var observacionBloque = document.getElementById('observaciones1')?.value;
+    var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
+    var estado = estadoCheckbox ? estadoCheckbox.value : 'Calendarizado';
+    var notaResumida2 = document.getElementById('observaciones3')?.value;
+    
+    // ✅ OBTENER FECHA ACTUAL DEL HEADER (la que está seleccionada)
+    var fechaActualHeader = document.getElementById('fechaInstalacion2')?.value;
+    console.log('📅 Fecha actual del header:', fechaActualHeader);
+    
+    // ✅ COMBINAR: Fecha actual + Fechas nuevas seleccionadas
+    var fechasArray = fechasSeleccionadas.split(',').map(f => f.trim());
+    
+    // Si la fecha actual no está en las seleccionadas, agregarla
+    if (fechaActualHeader && !fechasArray.includes(fechaActualHeader)) {
+        fechasArray.unshift(fechaActualHeader); // Agregar al inicio
+        console.log('✅ Fecha actual agregada:', fechaActualHeader);
+    }
+    
+    var fechasCombinadas = fechasArray.join(', ');
+    console.log('📅 Fechas combinadas:', fechasCombinadas);
 
     var datosParaEnviar = {
         nota_venta: notaVenta,
@@ -247,8 +357,21 @@ function guardarCambios() {
         observacion_bloque: observacionBloque,
         estado: estado,
         nota_resumida2: notaResumida2,
-        fechas: fechasSeleccionadas
+        fechas: fechasCombinadas // ✅ Enviar fechas combinadas
     };
+
+    console.log('📤 Enviando datos:', datosParaEnviar);
+
+    // Mostrar loading mientras se guarda
+    Swal.fire({
+        title: 'Guardando...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
 
     fetch('/guardar-agenda', {
         method: 'POST',
@@ -258,28 +381,85 @@ function guardarCambios() {
         },
         body: JSON.stringify(datosParaEnviar)
     })
-    .then(response => response.json())
-    .then(data => {
-        window.location.reload();
+    .then(response => {
+        console.log('📥 Status:', response.status);
+        return response.text().then(text => {
+            console.log('📄 Respuesta completa:', text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('❌ No es JSON válido');
+                throw new Error('El servidor devolvió HTML. Revisa los logs.');
+            }
+        });
     })
-    .catch(error => console.error('Error:', error));
+    .then(data => {
+        console.log('✅ Datos guardados:', data);
+        
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: `Registros guardados para ${fechasArray.length} fecha${fechasArray.length > 1 ? 's' : ''}`,
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            window.location.reload();
+        });
+    })
+    .catch(error => {
+        console.error('❌ Error:', error);
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al guardar',
+            text: error.message,
+            confirmButtonColor: '#d33'
+        });
+    });
 }
 
-function guardarCambios1() {
-    cerrarModalSeleccionDias();
 
-    var notaVenta = document.getElementById('notaVenta').value;
-    var transportista = document.getElementById('transportista').value;
-    var fechaEntrega = document.getElementById('fechaEntregaModal').value;
-    var observacionBloque = document.getElementById('observaciones1').value;
-    var observacionBloque2 = document.getElementById('observaciones3').value;
-    var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
-    var observacionBloque3 = document.getElementById('observaciones2').value;
-    var fechasSeleccionadas = document.getElementById('fechasSeleccionadas1').value.split(',');
-    var estado = estadoCheckbox ? estadoCheckbox.value : '';
+function guardarCambios1() {
+    console.log('🎯 Función guardarCambios1() ejecutada (asignación múltiple)');
+    
+    var fechasSeleccionadas = document.getElementById('fechasSeleccionadas1').value;
+    console.log('📅 Fechas del input:', fechasSeleccionadas);
+    
+    if (!fechasSeleccionadas || fechasSeleccionadas.trim() === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor seleccione al menos una fecha',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // ✅ USAR VALORES GUARDADOS TEMPORALMENTE
+    if (!window.datosModalTemp) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se encontraron los datos del modal',
+            confirmButtonColor: '#d33'
+        });
+        console.error('window.datosModalTemp no existe');
+        return;
+    }
+
+    var notaVenta = window.datosModalTemp.notaVenta;
+    var transportista = window.datosModalTemp.transportista;
+    var fechaEntrega = window.datosModalTemp.fechaEntrega;
+    var observacionBloque = window.datosModalTemp.observacionBloque;
+    var observacionBloque2 = window.datosModalTemp.observacionBloque2;
+    var observacionBloque3 = window.datosModalTemp.observacionBloque3;
+    var estado = window.datosModalTemp.estado;
+
+    console.log('📦 Usando datos temporales:', window.datosModalTemp);
 
     var instaladoresSeleccionados = document.querySelectorAll('.instaladores-container input[type="checkbox"]:checked');
     var bloquesSeleccionados = document.querySelectorAll('.bloques-container input[type="checkbox"]:checked');
+    var fechasArray = fechasSeleccionadas.split(',').map(f => f.trim());
 
     var datosParaEnviar = [];
     instaladoresSeleccionados.forEach(function(instalador) {
@@ -287,17 +467,30 @@ function guardarCambios1() {
             var bloqueId = bloque.getAttribute('data-id');
             datosParaEnviar.push({
                 nota_venta: notaVenta,
-                transportista: transportista,
+                transportista: transportista || null,
                 bloque: bloqueId,
                 fecha_entrega: fechaEntrega,
                 instalador: instalador.value,
                 observacion_bloque: observacionBloque,
                 nota_resumida2: observacionBloque2,
                 nota_resumida: observacionBloque3,
-                fechas: fechasSeleccionadas,
+                fechas: fechasArray,
                 estado: estado
             });
         });
+    });
+
+    console.log('📤 Enviando datos múltiples:', datosParaEnviar);
+
+    // Mostrar loading
+    Swal.fire({
+        title: 'Guardando...',
+        text: 'Procesando múltiples asignaciones',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
     });
 
     fetch('/guardar-agenda2', {
@@ -308,11 +501,43 @@ function guardarCambios1() {
         },
         body: JSON.stringify(datosParaEnviar)
     })
-    .then(response => response.json())
-    .then(data => {
-        window.location.reload();
+    .then(response => {
+        console.log('📥 Respuesta recibida:', response.status);
+        if (!response.ok) {
+            throw new Error('Error en la respuesta: ' + response.status);
+        }
+        return response.json();
     })
-    .catch(error => console.error('Error:', error));
+    .then(data => {
+        console.log('✅ Datos guardados:', data);
+        
+        // ✅ CERRAR MODAL DESPUÉS DE GUARDAR EXITOSAMENTE
+        cerrarModalSeleccionDias1();
+        
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: `Registros guardados para todas las combinaciones (${fechasArray.length} fecha${fechasArray.length > 1 ? 's' : ''})`,
+            timer: 2500,
+            showConfirmButton: false
+        }).then(() => {
+            // ✅ LIMPIAR DATOS TEMPORALES
+            delete window.datosModalTemp;
+            window.location.reload();
+        });
+    })
+    .catch(error => {
+        console.error('❌ Error:', error);
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al guardar',
+            text: error.message,
+            confirmButtonColor: '#d33'
+        });
+        
+        cerrarModalSeleccionDias1();
+    });
 }
 
 // =====================================================
@@ -591,157 +816,28 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
     // CALENDARIOS (modalSeleccionDias)
     // =================================================
     
-    let fechaActual = new Date();
-    let mesActual = fechaActual.getMonth();
-    let añoActual = fechaActual.getFullYear();
-    let fechasSeleccionadasGlobalmente = [];
+   
 
-    function generarCalendario(mes, año) {
-        const contenedor = document.getElementById('calendarioContainer');
-        if (!contenedor) return;
-        
-        contenedor.innerHTML = "";
-        let primerDiaMes = new Date(año, mes, 1);
-        let ultimoDiaMes = new Date(año, mes + 1, 0);
-        
-        const mesAnio = document.getElementById('mesAnio');
-        if (mesAnio) {
-            mesAnio.textContent = primerDiaMes.toLocaleString('default', { month: 'long' }) + ' ' + año;
-        }
+    
 
-        let calendario = document.createElement('div');
-        calendario.id = 'calendario';
+    
 
-        for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
-            let fechaCompleta = `${año}-${mes + 1}-${dia < 10 ? '0' + dia : dia}`;
-            let celdaDia = document.createElement('div');
-            celdaDia.classList.add('dia');
-            celdaDia.innerText = dia;
-            celdaDia.dataset.fecha = fechaCompleta;
-
-            if (fechasSeleccionadasGlobalmente.includes(fechaCompleta)) {
-                celdaDia.classList.add('seleccionado');
-            }
-
-            celdaDia.addEventListener('click', function() {
-                this.classList.toggle('seleccionado');
-                manejarSeleccionFecha(fechaCompleta);
-            });
-
-            calendario.appendChild(celdaDia);
-        }
-
-        contenedor.appendChild(calendario);
-    }
-
-    function cambiarMes(direccion) {
-        mesActual += direccion;
-        if (mesActual < 0) {
-            mesActual = 11;
-            añoActual -= 1;
-        } else if (mesActual > 11) {
-            mesActual = 0;
-            añoActual += 1;
-        }
-        generarCalendario(mesActual, añoActual);
-    }
-
-    function manejarSeleccionFecha(fecha) {
-        const indice = fechasSeleccionadasGlobalmente.indexOf(fecha);
-        if (indice > -1) {
-            fechasSeleccionadasGlobalmente.splice(indice, 1);
-        } else {
-            fechasSeleccionadasGlobalmente.push(fecha);
-        }
-        actualizarFechasSeleccionadas();
-    }
-
-    function actualizarFechasSeleccionadas() {
-        var elem = document.getElementById('fechasSeleccionadas');
-        if (elem) {
-            elem.value = fechasSeleccionadasGlobalmente.join(', ');
-        }
-    }
 
     var btnPrev = document.querySelector('.miModalSeleccionDias-controls button:nth-child(1)');
     var btnNext = document.querySelector('.miModalSeleccionDias-controls button:nth-child(3)');
     if (btnPrev) btnPrev.addEventListener('click', function() { cambiarMes(-1); });
     if (btnNext) btnNext.addEventListener('click', function() { cambiarMes(1); });
 
-    generarCalendario(mesActual, añoActual);
     
-    // Calendario 1 (modalSeleccionDias1)
-    let fechaActual1 = new Date();
-    let mesActual1 = fechaActual1.getMonth();
-    let añoActual1 = fechaActual1.getFullYear();
-    let fechasSeleccionadasGlobalmente1 = [];
+   generarCalendario(mesActual, añoActual)
 
-    function generarCalendario1(mes, año) {
-        const contenedor = document.getElementById('calendarioContainer1');
-        if (!contenedor) return;
-        
-        contenedor.innerHTML = "";
-        let primerDiaMes = new Date(año, mes, 1);
-        let ultimoDiaMes = new Date(año, mes + 1, 0);
+   
 
-        const mesAnio = document.getElementById('mesAnio1');
-        if (mesAnio) {
-            mesAnio.textContent = primerDiaMes.toLocaleString('default', { month: 'long' }) + ' ' + año;
-        }
+   
 
-        let calendario = document.createElement('div');
-        calendario.id = 'calendario1';
+   
 
-        for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
-            let fechaCompleta = `${año}-${mes + 1}-${dia < 10 ? '0' + dia : dia}`;
-            let celdaDia = document.createElement('div');
-            celdaDia.classList.add('dia');
-            celdaDia.innerText = dia;
-            celdaDia.dataset.fecha = fechaCompleta;
-
-            if (fechasSeleccionadasGlobalmente1.includes(fechaCompleta)) {
-                celdaDia.classList.add('seleccionado');
-            }
-
-            celdaDia.addEventListener('click', function() {
-                this.classList.toggle('seleccionado');
-                manejarSeleccionFecha1(fechaCompleta);
-            });
-
-            calendario.appendChild(celdaDia);
-        }
-
-        contenedor.appendChild(calendario);
-    }
-
-    function cambiarMes1(direccion) {
-        mesActual1 += direccion;
-        if (mesActual1 < 0) {
-            mesActual1 = 11;
-            añoActual1 -= 1;
-        } else if (mesActual1 > 11) {
-            mesActual1 = 0;
-            añoActual1 += 1;
-        }
-        generarCalendario1(mesActual1, añoActual1);
-    }
-
-    function manejarSeleccionFecha1(fecha) {
-        const indice = fechasSeleccionadasGlobalmente1.indexOf(fecha);
-        if (indice > -1) {
-            fechasSeleccionadasGlobalmente1.splice(indice, 1);
-        } else {
-            fechasSeleccionadasGlobalmente1.push(fecha);
-        }
-        actualizarFechasSeleccionadas1();
-    }
-
-    function actualizarFechasSeleccionadas1() {
-        var elem = document.getElementById('fechasSeleccionadas1');
-        if (elem) {
-            elem.value = fechasSeleccionadasGlobalmente1.join(', ');
-        }
-    }
+   
 
     var btnPrev1 = document.querySelector('#modalSeleccionDias1 .miModalSeleccionDias-controls button:nth-child(1)');
     var btnNext1 = document.querySelector('#modalSeleccionDias1 .miModalSeleccionDias-controls button:nth-child(3)');
@@ -844,8 +940,17 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
             var bloqueCompleto = document.getElementById('horaBloque').value;
             var bloque = extraerBloque(bloqueCompleto);
 
-            var confirmacion = confirm("¿Estás seguro de eliminar el requerimiento?");
-            if (confirmacion) {
+           Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará el requerimiento",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 fetch('/agenda-def/eliminar', {
                     method: 'DELETE',
                     headers: {
@@ -856,49 +961,87 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    window.location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: 'El requerimiento ha sido eliminado',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar el requerimiento'
+                    });
+                });
             }
+        });
+    
         });
     }
     
-    var botonEditar = document.getElementById('botoneditar');
-    if (botonEditar) {
-        botonEditar.addEventListener('click', function() {
-            var notaVenta = document.getElementById('notaVenta').value;
-            var transportista = document.getElementById('transportista').value;
-            var bloqueAntiguo = extraerBloque(document.getElementById('bloqueAntiguo').value);
-            var bloqueNuevo = extraerBloque(document.getElementById('horaBloque').value);
-            var fechaEntrega = document.getElementById('fechaEntregaModal').value;
-            var notaResumida = document.getElementById('observaciones2').value;
-            var observacionBloque = document.getElementById('observaciones1').value;
-            var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
-            var estado = estadoCheckbox ? estadoCheckbox.value : '';
-            var notaResumida2 = document.getElementById('observaciones3').value;
-            var fechaInstalacionAntigua = document.getElementById('fechaInstalacion2').value;
-            var fechaInstalacionNueva = document.getElementById('fechaInstalacionModal').value;
-            var instaladorAntiguo = document.getElementById('instaladorAntiguo').value;
-            var instaladorNuevo = document.getElementById('instalador').value;
+   var botonEditar = document.getElementById('botoneditar');
+if (botonEditar) {
+    botonEditar.addEventListener('click', function() {
+        var notaVenta = document.getElementById('notaVenta').value;
+        var transportista = document.getElementById('transportista').value;
+        var bloqueAntiguo = extraerBloque(document.getElementById('bloqueAntiguo').value);
+        var bloqueNuevo = extraerBloque(document.getElementById('horaBloque').value);
+        var fechaEntrega = document.getElementById('fechaEntregaModal').value;
+        var notaResumida = document.getElementById('observaciones2').value;
+        var observacionBloque = document.getElementById('observaciones1').value;
+        var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
+        var estado = estadoCheckbox ? estadoCheckbox.value : '';
+        var notaResumida2 = document.getElementById('observaciones3').value;
+        var fechaInstalacionAntigua = document.getElementById('fechaInstalacion2').value;
+        var fechaInstalacionNueva = document.getElementById('fechaInstalacionModal').value;
+        var instaladorAntiguo = document.getElementById('instaladorAntiguo').value;
+        var instaladorNuevo = document.getElementById('instalador').value;
 
-            var dataToSend = {
-                nota_venta: notaVenta,
-                transportista: transportista,
-                bloque_antiguo: bloqueAntiguo,
-                bloque_nuevo: bloqueNuevo,
-                fecha_entrega: fechaEntrega,
-                nota_resumida: notaResumida,
-                observacion_bloque: observacionBloque,
-                estado: estado,
-                nota_resumida2: notaResumida2,
-                fecha_instalacion_antigua: fechaInstalacionAntigua,
-                fecha_instalacion_nueva: fechaInstalacionNueva,
-                instalador_antiguo: instaladorAntiguo,
-                instalador_nuevo: instaladorNuevo
-            };
+        var dataToSend = {
+            nota_venta: notaVenta,
+            transportista: transportista,
+            bloque_antiguo: bloqueAntiguo,
+            bloque_nuevo: bloqueNuevo,
+            fecha_entrega: fechaEntrega,
+            nota_resumida: notaResumida,
+            observacion_bloque: observacionBloque,
+            estado: estado,
+            nota_resumida2: notaResumida2,
+            fecha_instalacion_antigua: fechaInstalacionAntigua,
+            fecha_instalacion_nueva: fechaInstalacionNueva,
+            instalador_antiguo: instaladorAntiguo,
+            instalador_nuevo: instaladorNuevo
+        };
 
-            var confirmacion = confirm("¿Deseas editar el requerimiento?");
-            if (confirmacion) {
+        // ✅ REEMPLAZAR confirm() POR SWAL
+        Swal.fire({
+            title: '¿Editar requerimiento?',
+            text: "Se actualizarán los datos del requerimiento",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Actualizando...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
                 fetch('/agenda-def/ruta-de-actualizacion', {
                     method: 'PUT',
                     headers: {
@@ -915,12 +1058,28 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
                     }
                 })
                 .then(data => {
-                    window.location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizado!',
+                        text: 'El requerimiento ha sido actualizado',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo actualizar el requerimiento'
+                    });
+                });
             }
         });
-    }
+    });
+}
     
     if (botonMultiple && asignacionSi) {
         botonMultiple.addEventListener('click', function(event) {
@@ -928,7 +1087,11 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
             var estado = estadoCheckbox ? estadoCheckbox.value : '';
 
             if (!estado) {
-                alert('Por favor, marque una opción de estado.');
+                Swal.fire({
+        icon: 'warning',
+        title: 'Estado requerido',
+        text: 'Por favor, marque una opción de estado'
+    });
                 return;
             }
 
@@ -936,7 +1099,11 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
             var bloquesSeleccionados = document.querySelectorAll('.bloques-container input[type="checkbox"]:checked');
 
             if (instaladoresSeleccionados.length === 1 && bloquesSeleccionados.length === 1) {
-                alert('Por favor, marque más alternativas.');
+                 Swal.fire({
+        icon: 'info',
+        title: 'Más alternativas',
+        text: 'Por favor, marque más alternativas para asignación múltiple'
+    });
                 return;
             }
 
@@ -959,3 +1126,145 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
     
     console.log('✅ Todos los event listeners configurados');
 });
+
+
+
+// =====================================================
+// EXPONER FUNCIONES GLOBALES PARA LOS MODALES
+// =====================================================
+
+window.generarCalendario = function(mes, año) {
+    const contenedor = document.getElementById('calendarioContainer');
+    if (!contenedor) return;
+    
+    contenedor.innerHTML = "";
+    let primerDiaMes = new Date(año, mes, 1);
+    let ultimoDiaMes = new Date(año, mes + 1, 0);
+    
+    const mesAnio = document.getElementById('mesAnio');
+    if (mesAnio) {
+        mesAnio.textContent = primerDiaMes.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+    }
+
+    let calendario = document.createElement('div');
+    calendario.id = 'calendario';
+
+    for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
+        let fechaCompleta = `${año}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        let celdaDia = document.createElement('div');
+        celdaDia.classList.add('dia');
+        celdaDia.innerText = dia;
+        celdaDia.dataset.fecha = fechaCompleta;
+
+        if (fechasSeleccionadasGlobalmente.includes(fechaCompleta)) {
+            celdaDia.classList.add('seleccionado');
+        }
+
+        celdaDia.addEventListener('click', function() {
+            this.classList.toggle('seleccionado');
+            manejarSeleccionFecha(fechaCompleta);
+        });
+
+        calendario.appendChild(celdaDia);
+    }
+
+    contenedor.appendChild(calendario);
+};
+
+window.generarCalendario1 = function(mes, año) {
+    const contenedor = document.getElementById('calendarioContainer1');
+    if (!contenedor) return;
+    
+    contenedor.innerHTML = "";
+    let primerDiaMes = new Date(año, mes, 1);
+    let ultimoDiaMes = new Date(año, mes + 1, 0);
+
+    const mesAnio = document.getElementById('mesAnio1');
+    if (mesAnio) {
+        mesAnio.textContent = primerDiaMes.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+    }
+
+    let calendario = document.createElement('div');
+    calendario.id = 'calendario1';
+
+    for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
+        let fechaCompleta = `${año}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        let celdaDia = document.createElement('div');
+        celdaDia.classList.add('dia');
+        celdaDia.innerText = dia;
+        celdaDia.dataset.fecha = fechaCompleta;
+
+        if (fechasSeleccionadasGlobalmente1.includes(fechaCompleta)) {
+            celdaDia.classList.add('seleccionado');
+        }
+
+        celdaDia.addEventListener('click', function() {
+            this.classList.toggle('seleccionado');
+            manejarSeleccionFecha1(fechaCompleta);
+        });
+
+        calendario.appendChild(celdaDia);
+    }
+
+    contenedor.appendChild(calendario);
+};
+
+window.manejarSeleccionFecha = function(fecha) {
+    const indice = fechasSeleccionadasGlobalmente.indexOf(fecha);
+    if (indice > -1) {
+        fechasSeleccionadasGlobalmente.splice(indice, 1);
+    } else {
+        fechasSeleccionadasGlobalmente.push(fecha);
+    }
+    actualizarFechasSeleccionadas();
+};
+
+window.manejarSeleccionFecha1 = function(fecha) {
+    const indice = fechasSeleccionadasGlobalmente1.indexOf(fecha);
+    if (indice > -1) {
+        fechasSeleccionadasGlobalmente1.splice(indice, 1);
+    } else {
+        fechasSeleccionadasGlobalmente1.push(fecha);
+    }
+    actualizarFechasSeleccionadas1();
+};
+
+window.actualizarFechasSeleccionadas = function() {
+    var elem = document.getElementById('fechasSeleccionadas');
+    if (elem) {
+        elem.value = fechasSeleccionadasGlobalmente.join(', ');
+    }
+};
+
+window.actualizarFechasSeleccionadas1 = function() {
+    var elem = document.getElementById('fechasSeleccionadas1');
+    if (elem) {
+        elem.value = fechasSeleccionadasGlobalmente1.join(', ');
+    }
+};
+
+window.cambiarMes = function(direccion) {
+    mesActual += direccion;
+    if (mesActual < 0) {
+        mesActual = 11;
+        añoActual -= 1;
+    } else if (mesActual > 11) {
+        mesActual = 0;
+        añoActual += 1;
+    }
+    window.generarCalendario(mesActual, añoActual);
+};
+
+window.cambiarMes1 = function(direccion) {
+    mesActual1 += direccion;
+    if (mesActual1 < 0) {
+        mesActual1 = 11;
+        añoActual1 -= 1;
+    } else if (mesActual1 > 11) {
+        mesActual1 = 0;
+        añoActual1 += 1;
+    }
+    window.generarCalendario1(mesActual1, añoActual1);
+};
+
+console.log('✅ Funciones de calendario expuestas globalmente');

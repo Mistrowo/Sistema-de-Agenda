@@ -406,31 +406,31 @@ public function agenda2()
     return view('agenda-def.agendaindi');
 }
 
+
 public function showDetalle($id)
 {
     $calendarioDef = CalendarioDef::findOrFail($id);
-
     $agendaItems = AgendaDef::all();
     $fechaInstalacion = $calendarioDef->fecha_instalacion ?? '-';
     $observacion = optional($calendarioDef->agendaDefs->first())->observacion_bloque;
     $notaresumida = optional($calendarioDef->agendaDefs->first())->nota_resumida;
     $fechaEntrega = optional($calendarioDef->agendaDefs->first())->fecha_entrega;
-
     $notaVenta = $calendarioDef->nota_venta ?? 'No definido';
     $cliente = $calendarioDef->cliente ?? 'No definido';
 
+    // ✅ OBTENER TODAS LAS FECHAS DE INSTALACIÓN ÚNICAS Y ORDENADAS
     $fechasInstalacion2 = AgendaDef::where('nota_venta', $notaVenta)
         ->whereNotNull('fecha_instalacion2')
         ->select('fecha_instalacion2')
         ->distinct()
+        ->orderBy('fecha_instalacion2', 'asc') // ✅ Ordenar por fecha
         ->pluck('fecha_instalacion2')
         ->toArray();
 
-    // Si no hay fechas de instalación 2, usar la fecha de instalación del CalendarioDef
+    // Si no hay fechas en AgendaDef, usar la fecha del CalendarioDef
     if (empty($fechasInstalacion2) && $fechaInstalacion !== '-') {
         $fechasInstalacion2 = [$fechaInstalacion];
     } elseif (empty($fechasInstalacion2)) {
-        // Si tampoco hay fecha de instalación en CalendarioDef, dejar el array vacío
         $fechasInstalacion2 = [];
     }
 
@@ -447,7 +447,6 @@ public function showDetalle($id)
         'fechasInstalacion2' => $fechasInstalacion2,
     ]);
 }
-
 
 
 public function showDetalle1($id)
@@ -806,10 +805,36 @@ public function obtenerTransportistaPorBloqueSesion(Request $request)
 }
 
 
+
+
 public function calendarioDia()
 {
+    $fechaSeleccionada = request()->query('fecha');
+    
+    if (!$fechaSeleccionada) {
+        $fechaSeleccionada = now()->format('Y-m-d');
+    }
+    
     $calendarioDefs = CalendarioDef::all();
-    $agendaItems = AgendaDef::all();
+    
+    $agendaItems = AgendaDef::with('notaVentaSoftland')
+                            ->whereDate('fecha_instalacion2', $fechaSeleccionada)
+                            ->get();
+    
+    Log::info('=== DEBUG CALENDARIO DIA ===');
+    Log::info('Fecha seleccionada: ' . $fechaSeleccionada);
+    Log::info('Total items: ' . $agendaItems->count());
+    
+    foreach ($agendaItems as $item) {
+        Log::info('Item:', [
+            'nota_venta' => $item->nota_venta,
+            'instalador' => $item->instalador,
+            'tiene_softland' => $item->notaVentaSoftland ? 'SI' : 'NO',
+            'cliente_softland' => $item->notaVentaSoftland?->nv_cliente ?? 'NULL',
+            'accessor_cliente' => $item->cliente ?? 'NULL'
+        ]);
+    }
+    
     $fechasInstalacion2 = AgendaDef::select('fecha_instalacion2')
                                     ->distinct()
                                     ->pluck('fecha_instalacion2');
@@ -832,7 +857,6 @@ public function calendarioDia()
         ];
     }
 
-
     $bloques = ['A-1', 'A-2', 'A-3', 'A-4', 'A-5', 'A-6', 'A-7', 'A-8'];
 
     $bloquesHorarios = [
@@ -845,7 +869,8 @@ public function calendarioDia()
         'A-7' => '20:00-22:00',
         'A-8' => '22:00-24:00',
     ];
-    $instaladores = ['DIEGO', 'FRANCO', 'GABRIEL', 'JONATHAN', 'VOLANTE', 'ILESA', 'BODEGA', 'KHEMNOVA', 'SAN JOAQUIN', 'STORETEK'];
+    
+    $instaladores = ['DIEGO', 'FRANCO', 'GABRIEL', 'JONATHAN', 'VOLANTE', 'ILESA', 'BODEGA'];
 
     return view('agenda-def.agenda-dia', [
         'infoCombinada' => $infoCombinada,
@@ -854,6 +879,7 @@ public function calendarioDia()
         'bloques' => $bloques,
         'instaladores' => $instaladores,
         'bloquesHorarios' => $bloquesHorarios,
+        'fechaSeleccionada' => $fechaSeleccionada,
     ]);
 }
 
@@ -861,15 +887,9 @@ public function calendarioDia()
 
 
 
-
-   
-
-
-
-
-
-    public function store2(Request $request)
-    {
+ public function store2(Request $request)
+{
+    try {
         $validatedData = $request->validate([
             'nota_venta' => 'required',
             'instalador' => 'required',
@@ -877,18 +897,26 @@ public function calendarioDia()
             'observacion_bloque' => 'nullable',
             'estado' => 'required',
             'fecha_entrega' => 'nullable',
-            'transportista' => 'required',
-            'nota_resumida' => 'required',
-            'nota_resumida2' => 'required',
-            'fechas' => 'required', // Asegúrate de agregar esto
-            
+            'transportista' => 'nullable',
+            'nota_resumida' => 'nullable',
+            'nota_resumida2' => 'nullable',
+            'fechas' => 'required|string',
         ]);
-    
-        // Suponiendo que 'fechas' es una cadena con fechas separadas por comas
-        $fechas = explode(',', $validatedData['fechas']);
-    
+
+        $fechas = array_map('trim', explode(',', $validatedData['fechas']));
+        
+        Log::info('Fechas recibidas:', ['fechas' => $fechas]);
+
         foreach ($fechas as $fecha) {
-            $fecha = trim($fecha); // Eliminar espacios en blanco
+            if (!preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/', $fecha)) {
+                Log::error('Fecha inválida:', ['fecha' => $fecha]);
+                continue;
+            }
+            
+            $fechaParts = explode('-', $fecha);
+            $fechaFormateada = sprintf('%04d-%02d-%02d', $fechaParts[0], $fechaParts[1], $fechaParts[2]);
+            
+            Log::info('Guardando registro para fecha:', ['fecha' => $fechaFormateada]);
             
             $agendaDef = new AgendaDef();
             $agendaDef->nota_venta = $validatedData['nota_venta'];
@@ -897,19 +925,33 @@ public function calendarioDia()
             $agendaDef->observacion_bloque = $validatedData['observacion_bloque'] ?? null;
             $agendaDef->estado = $validatedData['estado'];
             $agendaDef->fecha_entrega = $validatedData['fecha_entrega'] ?? null;
-            $agendaDef->transportista = $validatedData['transportista'];
-            $agendaDef->nota_resumida = $validatedData['nota_resumida'];
-            $agendaDef->nota_resumida2 = $validatedData['nota_resumida2'];
-            $agendaDef->fecha_instalacion2 = $fecha; // Agregar la fecha del bucle aquí
+            $agendaDef->transportista = $validatedData['transportista'] ?? null;
+            $agendaDef->nota_resumida = $validatedData['nota_resumida'] ?? null;
+            $agendaDef->nota_resumida2 = $validatedData['nota_resumida2'] ?? null;
+            $agendaDef->fecha_instalacion2 = $fechaFormateada;
             
             $agendaDef->save();
         }
 
-        return response()->json(['success' => 'Operación realizada exitosamente.']);
-
-    
+        return response()->json([
+            'success' => true,
+            'message' => 'Operación realizada exitosamente.',
+            'fechas_guardadas' => count($fechas) // ✅ Devolver cantidad de fechas guardadas
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error en store2:', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
     }
-    
+} 
     
 
 
@@ -943,31 +985,39 @@ public function calendarioDia()
 
     
 
-
-
-
-
-
 public function calendarioSemana()
 {
-
+    $fechaSeleccionada = request()->query('fecha');
+    
+    if (!$fechaSeleccionada) {
+        $fechaSeleccionada = Carbon::now()->startOfWeek()->format('Y-m-d');
+    }
+    
+    $lunesInicio = Carbon::parse($fechaSeleccionada)->startOfWeek();
+    
+    $weekDates = [];
+    for ($i = 0; $i < 7; $i++) {
+        $fecha = $lunesInicio->copy()->addDays($i);
+        $weekDates[] = $fecha->format('Y-m-d');
+    }
     
     $calendarioDefs = CalendarioDef::all();
-    $agendaItems = AgendaDef::all();
+    
+    // ✅ Cargar relación con TablaSoftland
+    $agendaItems = AgendaDef::with('notaVentaSoftland')
+                            ->whereIn('fecha_instalacion2', $weekDates)
+                            ->get();
+    
     $fechasInstalacion2 = AgendaDef::select('fecha_instalacion2')
                                     ->distinct()
                                     ->pluck('fecha_instalacion2');
-
-                                    
 
     $infoCombinada = [];
 
     foreach ($calendarioDefs as $calendarioDef) {
         $notaVenta = $calendarioDef->nota_venta ?? 'No definido';
         $cliente = $calendarioDef->cliente ?? 'No definido';
-
         $primerAgendaDef = $calendarioDef->agendaDefs->first();
-       
 
         $infoCombinada[] = [
             'calendarioDef' => $calendarioDef,
@@ -979,47 +1029,28 @@ public function calendarioSemana()
         ];
     }
 
-
     $instaladoresPorFecha = [];
     foreach ($agendaItems as $item) {
         $fechaFormateada = \Carbon\Carbon::parse($item->fecha_instalacion2)->format('Y-m-d');
-        $cliente = $item->calendarioDef->cliente ?? 'No definido';
-        $estado = $item->estado ?? 'No definido'; // Agrega esta línea
-
-        $calendarioDefId = $item->calendarioDef->id ?? null;
-        $item->calendario_def_id = $calendarioDefId; // Agrega el id a cada objeto
-    
+        // ✅ Usar el accessor 'cliente' del modelo
+        $cliente = $item->cliente;
+        $estado = $item->estado ?? 'No definido';
+        
         $item->nombre_cliente = $cliente;
-        $item->estado = $estado; // Agrega esta línea
-    
+        $item->estado = $estado;
+        
         $instaladoresPorFecha[$fechaFormateada][] = $item;
     }
-    
-    
 
-\Carbon\Carbon::setLocale('es'); // Establece el locale de Carbon a español
-
-    $startDate = Carbon::now()->startOfWeek();
-    $weekDates = [];
-
-    for ($i = 0; $i < 6; $i++) { // 6 porque estamos incluyendo hasta el sábado
-        $weekDates[] = $startDate->copy()->addDays($i)->isoFormat('dddd, Y-M-D'); 
-    }
-
-
-    
     return view('agenda-def.agenda-semana', [
         'infoCombinada' => $infoCombinada,
         'agendaItems' => $agendaItems,
         'fechasInstalacion2' => $fechasInstalacion2,
         'weekDates' => $weekDates,
-        'instaladoresPorFecha' => $instaladoresPorFecha, // Agrega esta línea
+        'instaladoresPorFecha' => $instaladoresPorFecha,
+        'fechaInicio' => $lunesInicio->format('Y-m-d'),
     ]);
-    
-    
 }
-
-
 
 
 

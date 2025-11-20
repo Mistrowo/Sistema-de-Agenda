@@ -64,7 +64,7 @@
             </div>
         </div>
 
-         <div class="flex flex-wrap items-center gap-3 justify-center text-xs">
+         <div class="flex flex-wrap items-center gap-3 justify-center text-xs py-2">
             <span class="font-semibold text-gray-700">
                 <i class="fas fa-info-circle text-blue-500 mr-1"></i>
                 Leyenda:
@@ -117,41 +117,45 @@
                                 <div class="text-xs text-gray-600">{{ $bloque }}</div>
                             </td>
 
-                            @foreach(['DIEGO','FRANCO','GABRIEL','JONATHAN','VOLANTE','ILESA','BODEGA'] as $instalador)
-                                @php
-                                    $itemsInstalador = $items->where('instalador', $instalador);
-                                @endphp
-                                <td class="p-3 align-top border-r border-gray-200">
-                                    <div class="space-y-2">
-                                        @foreach($itemsInstalador as $item)
-                                            @php
-                                                $bg = match($item->estado) {
-                                                    'Calendarizado' => 'bg-p-green border-green-400 text-green-900',
-                                                    'En espera'     => 'bg-p-yellow border-amber-400 text-amber-900',
-                                                    'Post-Venta'    => 'bg-p-pink border-pink-400 text-pink-900',
-                                                    default         => 'bg-gray-100 border-gray-400 text-gray-700'
-                                                };
-                                            @endphp
+                          @foreach(['DIEGO','FRANCO','GABRIEL','JONATHAN','VOLANTE','ILESA','BODEGA'] as $instalador)
+    @php
+        $itemsInstalador = $items->where('instalador', $instalador);
+    @endphp
+    <td class="p-3 align-top border-r border-gray-200">
+        <div class="space-y-2">
+            @foreach($itemsInstalador as $item)
+                @php
+                    $bg = match($item->estado) {
+                        'Calendarizado' => 'bg-p-blue border-blue-400 text-blue-900',
+                        'En espera'     => 'bg-p-pink border-amber-400 text-amber-900',
+                        'Post-Venta'    => 'bg-p-green border-green-400 text-green-900',
+                        default         => 'bg-gray-100 border-gray-400 text-gray-700'
+                    };
+                    
+                    // ✅ OBTENER CLIENTE - Esta es la línea crítica
+                    $cliente = $item->cliente ?? 'Sin cliente';
+                @endphp
 
-                                            <div 
-                                                class="item-card rounded-lg border-2 {{ $bg }} p-3 shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
-                                                onclick="abrirModal(@json($item))">
-                                                <div class="text-xs font-bold text-gray-800">
-                                                    NV: {{ $item->nota_venta }}
-                                                </div>
-                                                <div class="text-xs truncate text-gray-700 mt-1">
-                                                    {{ Str::limit($item->calendarioDef->cliente ?? '', 22) }}
-                                                </div>
-                                                @if($item->nota_resumida)
-                                                    <div class="text-[10px] italic text-gray-600 mt-1 truncate">
-                                                        {{ Str::limit($item->nota_resumida, 32) }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </td>
-                            @endforeach
+                <div 
+                    class="item-card rounded-lg border-2 {{ $bg }} p-3 shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
+                    data-item='@json($item)'
+                    onclick="abrirModalSeguro(this)">
+                    <div class="text-xs font-bold text-gray-800">
+                        NV: {{ $item->nota_venta }}
+                    </div>
+                    <div class="text-xs truncate text-gray-700 mt-1">
+                        {{ Str::limit($cliente, 22) }}
+                    </div>
+                    @if($item->nota_resumida)
+                        <div class="text-[10px] italic text-gray-600 mt-1 truncate">
+                            {{ Str::limit($item->nota_resumida, 32) }}
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </td>
+@endforeach
                         </tr>
                     @endforeach
                 </tbody>
@@ -159,16 +163,13 @@
         </div>
     </div>
 
-    <!-- LEYENDA -->
-   
-
     <!-- MODAL -->
     <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full">
             <div class="bg-gradient-to-r from-p-blue to-p-purple text-gray-800 p-5 rounded-t-2xl">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold">Editar Instalación</h3>
-                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="p-2 hover:bg-white/30 rounded-lg">
+                    <h3 class="text-lg font-bold">Detalle Instalación</h3>
+                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="p-2 hover:bg-white/30 rounded-lg text-2xl">
                         ×
                     </button>
                 </div>
@@ -181,6 +182,13 @@
         const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
         let fecha = new Date();
 
+        // Obtener fecha desde URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const fechaURL = urlParams.get('fecha');
+        if (fechaURL) {
+            fecha = new Date(fechaURL + 'T00:00:00');
+        }
+
         function actualizarFecha() {
             const dia = fecha.getDate();
             const mes = meses[fecha.getMonth()];
@@ -188,45 +196,83 @@
             document.getElementById('current-date').innerHTML = `${dia} ${mes} ${año}`;
         }
 
-        document.getElementById('prev-day').onclick = () => { fecha.setDate(fecha.getDate() - 1); actualizarFecha(); filtrar(); };
-        document.getElementById('next-day').onclick = () => { fecha.setDate(fecha.getDate() + 1); actualizarFecha(); filtrar(); };
+        document.getElementById('prev-day').onclick = () => { 
+            fecha.setDate(fecha.getDate() - 1);
+            recargarConFecha();
+        };
+        
+        document.getElementById('next-day').onclick = () => { 
+            fecha.setDate(fecha.getDate() + 1);
+            recargarConFecha();
+        };
 
-        function filtrar() {
-            const hoy = fecha.toISOString().slice(0,10);
-            document.querySelectorAll('.item-card').forEach(card => {
-                try {
-                    const item = JSON.parse(card.getAttribute('onclick').match(/\((.*)\)/)[1]);
-                    card.style.display = item.fecha_instalacion2 === hoy ? 'block' : 'none';
-                } catch(e) {}
-            });
+        function recargarConFecha() {
+            const fechaFormateada = fecha.toISOString().slice(0, 10);
+            const url = new URL(window.location.href);
+            url.searchParams.set('fecha', fechaFormateada);
+            window.location.href = url.toString();
         }
 
-        function abrirModal(item) {
-            document.getElementById('modal-body').innerHTML = `
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>NV:</strong> ${item.nota_venta}</div>
-                    <div><strong>Cliente:</strong> ${item.calendarioDef.cliente}</div>
-                    <div><strong>Fecha:</strong> ${item.fecha_instalacion2}</div>
-                    <div><strong>Estado:</strong> <span class="px-2 py-1 rounded text-xs font-medium ${
-                        item.estado === 'Calendarizado' ? 'bg-p-green text-green-900' : 
-                        item.estado === 'En espera' ? 'bg-p-yellow text-amber-900' : 
-                        'bg-p-pink text-pink-900'
-                    }">${item.estado}</span></div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-sm font-medium mb-1">Nota Resumida</label>
-                    <textarea class="w-full p-3 border rounded-lg" rows="2">${item.nota_resumida || ''}</textarea>
-                </div>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm">Cancelar</button>
-                    <button class="px-8 py-2 bg-gradient-to-r from-p-darkblue to-blue-600 text-white rounded-lg font-medium text-sm">Guardar</button>
-                </div>
-            `;
-            document.getElementById('modal').classList.remove('hidden');
+        function abrirModalSeguro(element) {
+            try {
+                const itemJson = element.getAttribute('data-item');
+                const item = JSON.parse(itemJson);
+                abrirModal(item);
+            } catch(e) {
+                console.error('Error al abrir modal:', e);
+                alert('Error al cargar los datos del modal');
+            }
         }
 
+    function abrirModal(item) {
+    // ✅ Obtener cliente de diferentes fuentes posibles
+    const notaResumida = item.nota_resumida || '';
+    const notaResumida2 = item.nota_resumida2 || '';
+    const observacionBloque = item.observacion_bloque || '';
+    
+    document.getElementById('modal-body').innerHTML = `
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div><strong>NV:</strong> ${item.nota_venta || 'N/A'}</div>
+            <div><strong>Fecha:</strong> ${item.fecha_instalacion2 || 'N/A'}</div>
+            <div><strong>Instalador:</strong> ${item.instalador || 'Sin asignar'}</div>
+            <div><strong>Bloque:</strong> ${item.bloque || 'N/A'}</div>
+            <div class="col-span-2"><strong>Estado:</strong> 
+                <span class="px-2 py-1 rounded text-xs font-medium ${
+                    item.estado === 'Calendarizado' ? 'bg-p-blue text-green-900' : 
+                    item.estado === 'En espera' ? 'bg-p-pink text-amber-900' : 
+                    item.estado === 'Post-Venta' ? 'bg-p-green text-pink-900' :
+                    'bg-gray-100 text-gray-700'
+                }">${item.estado || 'Sin estado'}</span>
+            </div>
+        </div>
+        ${notaResumida ? `
+            <div class="mt-4">
+                <label class="block text-sm font-medium mb-1">Nota Resumida</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${notaResumida}</textarea>
+            </div>
+        ` : ''}
+        ${notaResumida2 ? `
+            <div class="mt-2">
+                <label class="block text-sm font-medium mb-1">Nota Resumida 2</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${notaResumida2}</textarea>
+            </div>
+        ` : ''}
+        ${observacionBloque ? `
+            <div class="mt-2">
+                <label class="block text-sm font-medium mb-1">Observaciones</label>
+                <textarea class="w-full p-3 border rounded-lg bg-gray-50" rows="2" readonly>${observacionBloque}</textarea>
+            </div>
+        ` : ''}
+        <div class="flex justify-end gap-3 mt-6">
+            <button onclick="document.getElementById('modal').classList.add('hidden')" 
+                    class="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm">
+                Cerrar
+            </button>
+        </div>
+    `;
+    document.getElementById('modal').classList.remove('hidden');
+}
         actualizarFecha();
-        filtrar();
     </script>
 </body>
 </html>

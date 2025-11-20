@@ -14,6 +14,7 @@
     
     <!-- FullCalendar CSS -->
     <link href="https://unpkg.com/fullcalendar@5/main.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -26,6 +27,7 @@
     <!-- Bootstrap JS (solo para modales legacy) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Configuración de Tailwind -->
     <script>
@@ -45,17 +47,14 @@
     <!-- Header Profesional -->
     @include('components.agenda1.header')
     
-    <!-- Contenedor Principal -->
     @include('components.agenda1.contenedor')
     
-    <!-- Modales (Comentados temporalmente - Modernizar por sección) -->
     @include('components.agenda1.modal-principal')
     @include('components.agenda1.modal')
      @include('components.agenda1.modal-calendario') 
      @include('components.agenda1.modalaux') 
      @include('components.agenda1.modalauxcalendario') 
 
-    <!-- JavaScript Principal -->
     <script src="{{ asset('js/calendario.js') }}"></script>
 </body>
 </html>
