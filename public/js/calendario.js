@@ -208,7 +208,6 @@ if (!estado) {
         }).then(() => {
             window.location.reload();
         });
-        window.location.reload();
     } else {
 
          Swal.fire({
@@ -237,7 +236,6 @@ if (!estado) {
     }
 });
 }
-
 function enviarDatos() {
     cerrarModalConfirmacionPersonalizado1();
 
@@ -248,10 +246,10 @@ function enviarDatos() {
     var observacionBloque = document.getElementById('observaciones1').value;
     var observacionBloque2 = document.getElementById('observaciones3').value;
     var observacionBloque3 = document.getElementById('observaciones2').value;
-     var fechaInstalacion = document.getElementById('fechaInstalacionModal').value;
+    var fechaInstalacion = document.getElementById('fechaInstalacionModal').value;
     var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
-var estado = estadoCheckbox ? estadoCheckbox.value : 'Calendarizado'; // Valor por defecto
-console.log('🔍 Estado seleccionado:', estado);
+    var estado = estadoCheckbox ? estadoCheckbox.value : 'Calendarizado';
+    console.log('🔍 Estado seleccionado:', estado);
 
     var instaladoresSeleccionados = document.querySelectorAll('.instaladores-container input[type="checkbox"]:checked');
     var bloquesSeleccionados = document.querySelectorAll('.bloques-container input[type="checkbox"]:checked');
@@ -275,6 +273,16 @@ console.log('🔍 Estado seleccionado:', estado);
         });
     });
 
+    Swal.fire({
+        title: 'Guardando...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
     fetch('/agenda-def/ruta-para-guardar-multiple', {
         method: 'POST',
         headers: {
@@ -285,9 +293,28 @@ console.log('🔍 Estado seleccionado:', estado);
     })
     .then(response => response.json())
     .then(data => {
-        window.location.reload();
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Registros guardados correctamente',
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then(() => {
+            window.location.reload();
+        });
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudieron guardar los registros',
+            confirmButtonColor: '#3085d6'
+        });
+    });
 }
 
 function guardarCambios() {
@@ -400,8 +427,11 @@ function guardarCambios() {
             icon: 'success',
             title: '¡Éxito!',
             text: `Registros guardados para ${fechasArray.length} fecha${fechasArray.length > 1 ? 's' : ''}`,
-            timer: 2000,
-            showConfirmButton: false
+            timer: 2500,
+timerProgressBar: true,
+showConfirmButton: false,
+allowOutsideClick: false,
+allowEscapeKey: false
         }).then(() => {
             window.location.reload();
         });
@@ -519,7 +549,10 @@ function guardarCambios1() {
             title: '¡Éxito!',
             text: `Registros guardados para todas las combinaciones (${fechasArray.length} fecha${fechasArray.length > 1 ? 's' : ''})`,
             timer: 2500,
-            showConfirmButton: false
+timerProgressBar: true,
+showConfirmButton: false,
+allowOutsideClick: false,
+allowEscapeKey: false
         }).then(() => {
             // ✅ LIMPIAR DATOS TEMPORALES
             delete window.datosModalTemp;
