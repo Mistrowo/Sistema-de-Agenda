@@ -1374,8 +1374,64 @@ public function showDetalleSoftlandInstalador($folio)
         return redirect()->route('calendario3')->with('error', 'No se encontró la nota de venta.');
     }
 }
+// ✅ REEMPLAZAR el método obtenerZona en AgendaDefController.php con este:
 
-
-
+/**
+ * Obtener zona guardada para una nota de venta y fecha específica
+ */
+public function obtenerZona(Request $request)
+{
+    try {
+        $notaVenta = $request->input('nota_venta');
+        $fechaInstalacion = $request->input('fecha_instalacion2');
+        
+        // Buscar el primer registro que coincida
+        $agenda = AgendaDef::where('nota_venta', $notaVenta)
+                           ->where('fecha_instalacion2', $fechaInstalacion)
+                           ->first();
+        
+        return response()->json([
+            'success' => true,
+            'zona' => $agenda ? $agenda->zona : null,
+            'existe_bloque' => $agenda !== null  // ✅ Indica si existe al menos un bloque
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error al obtener zona: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'zona' => null,
+            'existe_bloque' => false
+        ]);
+    }
+}
+public function guardarZona(Request $request)
+{
+    try {
+        $notaVenta = $request->input('nota_venta');
+        $fechaInstalacion = $request->input('fecha_instalacion2');
+        $zona = $request->input('zona');
+        
+        // Actualizar todos los registros que coincidan
+        $actualizados = AgendaDef::where('nota_venta', $notaVenta)
+                                  ->where('fecha_instalacion2', $fechaInstalacion)
+                                  ->update(['zona' => $zona]);
+        
+        Log::info("Zona actualizada: {$actualizados} registro(s) para NV {$notaVenta}");
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Zona guardada correctamente',
+            'actualizados' => $actualizados
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error al guardar zona: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al guardar zona: ' . $e->getMessage()
+        ], 500);
+    }
+}
 }
 

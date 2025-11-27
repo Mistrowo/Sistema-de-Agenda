@@ -71,3 +71,6 @@ Route::post('/ruta-para-obtener-estado', [AgendaDefController::class, 'obtenerEs
 Route::post('/ruta-para-obtener-estado2', [AgendaDefController::class, 'obtenerEstado2']);
 
 Route::post('/calendario-def/{id}/actualizar-proyecto', [CalendarioDefController::class, 'actualizarProyecto'])->name('calendario-def.actualizar-proyecto');
+
+Route::post('/obtener-zona', [AgendaDefController::class, 'obtenerZona']);
+Route::post('/guardar-zona', [AgendaDefController::class, 'guardarZona']);

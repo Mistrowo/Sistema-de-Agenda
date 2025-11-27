@@ -19,12 +19,13 @@ class AgendaDef extends Model
         'estado',
         'nota_resumida',
         'transportista',
+        'zona',  
         'nota_resumida2',
         'fecha_instalacion2'
     ];
 
     /**
-     * ✅ Relación con TablaSoftland para obtener datos del cliente
+     *  Relación con TablaSoftland para obtener datos del cliente
      */
     public function notaVentaSoftland()
     {
@@ -32,7 +33,7 @@ class AgendaDef extends Model
     }
 
     /**
-     * ✅ Accessor para obtener el cliente directamente
+     *  Accessor para obtener el cliente directamente
      */
     public function getClienteAttribute()
     {
