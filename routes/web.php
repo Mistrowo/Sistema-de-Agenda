@@ -41,6 +41,9 @@ Route::group(['prefix' => 'agenda-def','middleware' => ['custom.session']], func
     Route::post('/store3', [AgendaDefController::class, 'store3'])->name('agenda_def.store3');
 
     Route::delete('/eliminar', [AgendaDefController::class, 'destroy1'])->name('eliminar-agenda-def');
+    // ✅ NUEVA RUTA: Eliminar múltiples registros
+    Route::post('/eliminar-multiples', [AgendaDefController::class, 'destroyMultiple'])->name('eliminar-agenda-multiples');
+    
     Route::put('/update-observacion/{id}', [AgendaDefController::class, 'updateObservacion'])->name('agenda-def.update-observacion');
     Route::put('/ruta-de-actualizacion', [AgendaDefController::class, 'update1'])->name('ruta-de-actualizacion');
     Route::put('/ruta-de-actualizacion2', [AgendaDefController::class, 'update2'])->name('ruta-de-actualizacion2');

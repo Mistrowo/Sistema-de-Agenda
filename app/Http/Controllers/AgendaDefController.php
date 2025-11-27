@@ -233,6 +233,90 @@ class AgendaDefController extends Controller
         }
     }
 
+    /**
+     * ✅ NUEVO: Eliminar múltiples registros de agenda
+     */
+    public function destroyMultiple(Request $request)
+    {
+        try {
+            Log::info('=== INICIO ELIMINACIÓN MÚLTIPLE ===');
+            Log::info('Datos recibidos:', $request->all());
+            
+            $registros = $request->input('registros', []);
+            
+            if (empty($registros)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se recibieron registros para eliminar'
+                ], 400);
+            }
+            
+            $eliminados = 0;
+            $errores = [];
+            
+            foreach ($registros as $registro) {
+                try {
+                    // Validar que tenga los campos necesarios
+                    if (!isset($registro['nota_venta']) || !isset($registro['instalador']) || 
+                        !isset($registro['bloque']) || !isset($registro['fecha_instalacion2'])) {
+                        $errores[] = "Registro incompleto: " . json_encode($registro);
+                        continue;
+                    }
+                    
+                    // Buscar y eliminar
+                    $agendaDef = AgendaDef::where('nota_venta', $registro['nota_venta'])
+                                          ->where('instalador', $registro['instalador'])
+                                          ->where('bloque', $registro['bloque'])
+                                          ->where('fecha_instalacion2', $registro['fecha_instalacion2'])
+                                          ->first();
+                    
+                    if ($agendaDef) {
+                        $agendaDef->delete();
+                        $eliminados++;
+                        Log::info('Eliminado:', [
+                            'nota_venta' => $registro['nota_venta'],
+                            'instalador' => $registro['instalador'],
+                            'bloque' => $registro['bloque'],
+                            'fecha' => $registro['fecha_instalacion2']
+                        ]);
+                    } else {
+                        $errores[] = "No encontrado: NV {$registro['nota_venta']}, {$registro['instalador']}, {$registro['bloque']}";
+                    }
+                    
+                } catch (\Exception $e) {
+                    $errores[] = "Error al eliminar: " . $e->getMessage();
+                    Log::error('Error individual:', ['error' => $e->getMessage(), 'registro' => $registro]);
+                }
+            }
+            
+            Log::info('=== FIN ELIMINACIÓN MÚLTIPLE ===', [
+                'total_recibidos' => count($registros),
+                'eliminados' => $eliminados,
+                'errores_count' => count($errores)
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Se eliminaron {$eliminados} registro(s) exitosamente",
+                'eliminados' => $eliminados,
+                'total' => count($registros),
+                'errores' => $errores
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error general en destroyMultiple:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar registros: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function update1(Request $request)
 {
     Log::info('Datos recibidos:', $request->all());
