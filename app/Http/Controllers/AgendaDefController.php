@@ -780,30 +780,6 @@ public function obtenerObservacionPorBloqueSesion(Request $request)
 
 
 
-public function obtenerTransportistaPorBloqueSesion(Request $request)
-{
-    $bloque = $request->input('bloque');
-    $instaladorNombre = $request->input('instalador');
-    $fechaInstalacion2 = $request->input('fecha_instalacion2');
-
-
-
-    $agendaDef = AgendaDef::where('bloque', $bloque)
-                          ->where('instalador', $instaladorNombre)
-                          ->where('fecha_instalacion2', $fechaInstalacion2)
-
-                          
-                          ->first();
-    $transportista = $agendaDef ? $agendaDef->transportista : 'Completar Campo';
-
-    return response()->json([
-        'bloque' => $bloque,
-        'instalador' => $instaladorNombre,
-        'transportista' => $transportista
-    ]);
-
-}
-
 
 
 

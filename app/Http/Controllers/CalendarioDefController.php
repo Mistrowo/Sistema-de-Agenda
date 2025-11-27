@@ -12,6 +12,7 @@ use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Models\TablaSoftland;
+use App\Models\Nvgestion;
 
 
 /**
@@ -122,83 +123,150 @@ class CalendarioDefController extends Controller
     
         return redirect()->route('calendario')->with('success', 'Registro eliminado con éxito');
     }
-public function calendario(Request $request)
-{
-    $notasVentaSoftland = collect();
-    $notasConAgenda = [];
-    
-    try {
-        // Query base
-        $query = \App\Models\TablaSoftland::select([
-            'nv_id',
-            'nv_folio',
-            'nv_descripcion',
-            'nv_cliente',
-            'nv_vend',
-            'nv_estado',
-            'nv_femision',
-            'nv_fentrega'
-        ]);
+
+    public function calendario(Request $request)
+    {
+        $notasVentaSoftland = collect();
+        $notasConAgenda = [];
         
-        // FILTRO POR NOTA DE VENTA
-        if ($request->filled('nota_venta')) {
-            $query->where('nv_folio', 'LIKE', '%' . $request->nota_venta . '%');
-        }
-        
-        // FILTRO POR TIPO DE FECHA
-        $tipoFecha = $request->input('tipo_fecha', 'emision');
-        $fechaDesde = $request->input('fecha_desde');
-        $fechaHasta = $request->input('fecha_hasta');
-        
-        if ($fechaDesde || $fechaHasta) {
-            $campoFecha = ($tipoFecha === 'entrega') ? 'nv_fentrega' : 'nv_femision';
+        try {
+            // Query base con relación eager loading para Nvgestion
+            $query = \App\Models\TablaSoftland::with('nvgestion')
+                ->select([
+                    'nv_id',
+                    'nv_folio',
+                    'nv_descripcion',
+                    'nv_cliente',
+                    'nv_vend',
+                    'nv_estado',
+                    'nv_femision',
+                    'nv_fentrega'
+                ]);
             
-            if ($fechaDesde && $fechaHasta) {
-                $query->whereBetween($campoFecha, [$fechaDesde, $fechaHasta]);
-            } elseif ($fechaDesde) {
-                $query->where($campoFecha, '>=', $fechaDesde);
-            } elseif ($fechaHasta) {
-                $query->where($campoFecha, '<=', $fechaHasta);
+            // FILTRO POR NOTA DE VENTA
+            if ($request->filled('nota_venta')) {
+                $query->where('nv_folio', 'LIKE', '%' . $request->nota_venta . '%');
             }
-        }
-        
-        // Ordenar y paginar
-        $notasVentaSoftland = $query->orderBy('nv_femision', 'desc')
-                                   ->paginate(50)
-                                   ->appends($request->all()); // Mantener filtros en paginación
-        
-        Log::info('Registros cargados de Softland: ' . $notasVentaSoftland->total());
-        
-        // Obtener estados de agenda
-        $todasLasAgendas = \App\Models\AgendaDef::all();
-        
-        foreach ($notasVentaSoftland as $nota) {
-            $folio = $nota->nv_folio;
             
-            $agendasDeEstaNota = $todasLasAgendas->filter(function($agenda) use ($folio) {
-                return $agenda->nota_venta == $folio;
-            });
+            // FILTRO POR TIPO DE FECHA
+            $tipoFecha = $request->input('tipo_fecha', 'emision');
+            $fechaDesde = $request->input('fecha_desde');
+            $fechaHasta = $request->input('fecha_hasta');
             
-            if ($agendasDeEstaNota->isNotEmpty()) {
-                $notasConAgenda[$folio] = [
-                    'total' => $agendasDeEstaNota->count(),
-                    'calendarizado' => $agendasDeEstaNota->where('estado', 'Calendarizado')->count(),
-                    'en_espera' => $agendasDeEstaNota->where('estado', 'En espera')->count(),
-                    'post_venta' => $agendasDeEstaNota->where('estado', 'Post-Venta')->count(),
-                ];
+            if ($fechaDesde || $fechaHasta) {
+                $campoFecha = ($tipoFecha === 'entrega') ? 'nv_fentrega' : 'nv_femision';
+                
+                if ($fechaDesde && $fechaHasta) {
+                    $query->whereBetween($campoFecha, [$fechaDesde, $fechaHasta]);
+                } elseif ($fechaDesde) {
+                    $query->where($campoFecha, '>=', $fechaDesde);
+                } elseif ($fechaHasta) {
+                    $query->where($campoFecha, '<=', $fechaHasta);
+                }
             }
+            
+            // Ordenar y paginar
+            $notasVentaSoftland = $query->orderBy('nv_femision', 'desc')
+                                       ->paginate(50)
+                                       ->appends($request->all()); // Mantener filtros en paginación
+            
+            Log::info('Registros cargados de Softland: ' . $notasVentaSoftland->total());
+            
+            // Obtener estados de agenda
+            $todasLasAgendas = \App\Models\AgendaDef::all();
+            
+            foreach ($notasVentaSoftland as $nota) {
+                $folio = $nota->nv_folio;
+                
+                $agendasDeEstaNota = $todasLasAgendas->filter(function($agenda) use ($folio) {
+                    return $agenda->nota_venta == $folio;
+                });
+                
+                if ($agendasDeEstaNota->isNotEmpty()) {
+                    $notasConAgenda[$folio] = [
+                        'total' => $agendasDeEstaNota->count(),
+                        'calendarizado' => $agendasDeEstaNota->where('estado', 'Calendarizado')->count(),
+                        'en_espera' => $agendasDeEstaNota->where('estado', 'En espera')->count(),
+                        'post_venta' => $agendasDeEstaNota->where('estado', 'Post-Venta')->count(),
+                    ];
+                }
+            }
+            
+        } catch (\Exception $e) {
+            Log::warning('No se pudo conectar a Softland: ' . $e->getMessage());
+            
+            $notasVentaSoftland = collect([]);
+            
+            session()->flash('warning', '⚠️ No se pudo conectar a Softland.');
         }
-        
-    } catch (\Exception $e) {
-        Log::warning('No se pudo conectar a Softland: ' . $e->getMessage());
-        
-        $notasVentaSoftland = collect([]);
-        
-        session()->flash('warning', '⚠️ No se pudo conectar a Softland.');
+
+        return view('calendario-def.listado', compact('notasVentaSoftland', 'notasConAgenda'));
     }
 
-    return view('calendario-def.listado', compact('notasVentaSoftland', 'notasConAgenda'));
-}
+    /**
+     * Actualizar masivamente las fechas de entrega desde Nvgestion
+     */
+    public function actualizarFechasDesdeNvgestion(Request $request)
+    {
+        try {
+            set_time_limit(300); // 5 minutos de timeout
+            
+            $actualizados = 0;
+            $sinCambios = 0;
+            
+            // Obtener todas las notas que están en la vista actual
+            $query = \App\Models\TablaSoftland::with('nvgestion');
+            
+            // Aplicar los mismos filtros que en calendario()
+            if ($request->filled('nota_venta')) {
+                $query->where('nv_folio', 'LIKE', '%' . $request->nota_venta . '%');
+            }
+            
+            $tipoFecha = $request->input('tipo_fecha', 'emision');
+            $fechaDesde = $request->input('fecha_desde');
+            $fechaHasta = $request->input('fecha_hasta');
+            
+            if ($fechaDesde || $fechaHasta) {
+                $campoFecha = ($tipoFecha === 'entrega') ? 'nv_fentrega' : 'nv_femision';
+                
+                if ($fechaDesde && $fechaHasta) {
+                    $query->whereBetween($campoFecha, [$fechaDesde, $fechaHasta]);
+                } elseif ($fechaDesde) {
+                    $query->where($campoFecha, '>=', $fechaDesde);
+                } elseif ($fechaHasta) {
+                    $query->where($campoFecha, '<=', $fechaHasta);
+                }
+            }
+            
+            $notas = $query->get();
+            
+            foreach ($notas as $nota) {
+                if ($nota->nvgestion && $nota->nvgestion->c_fecha_modificada) {
+                    $actualizados++;
+                } else {
+                    $sinCambios++;
+                }
+            }
+            
+            Log::info("Actualización de fechas completada: {$actualizados} con fecha modificada, {$sinCambios} sin cambios");
+            
+            return response()->json([
+                'success' => true,
+                'actualizados' => $actualizados,
+                'sin_cambios' => $sinCambios,
+                'total' => $actualizados + $sinCambios,
+                'message' => "Se actualizaron {$actualizados} fechas desde Nvgestion"
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar fechas: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar fechas: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function calendario3(Request $request)
     {

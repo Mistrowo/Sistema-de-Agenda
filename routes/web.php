@@ -15,6 +15,7 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'calendario-def', 'middleware' => ['custom.session']], function () {
     Route::get('/calendario', [CalendarioDefController::class, 'calendario'])->name('calendario')->middleware('checkRole:1');
+    Route::post('/actualizar-fechas-nvgestion', [CalendarioDefController::class, 'actualizarFechasDesdeNvgestion'])->name('calendario.actualizar-fechas')->middleware('checkRole:1');
     Route::resource('calendario_def', CalendarioDefController::class);
     Route::get('/agendainstalador', [CalendarioDefController::class, 'calendario2'])->name('calendario2')->middleware('checkRole:3');
     Route::get('/calendarioinstalador', [CalendarioDefController::class, 'calendario3'])->name('calendario3')->middleware('checkRole:3');

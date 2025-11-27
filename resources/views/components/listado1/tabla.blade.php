@@ -75,12 +75,31 @@ use Carbon\Carbon;
                             <span class="text-gray-400">-</span>
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">
-                        @if($nota->nv_fentrega)
-                            {{ Carbon::parse($nota->nv_fentrega)->format('d/m/Y') }}
-                        @else
-                            <span class="text-gray-400">-</span>
-                        @endif
+                    <td class="px-4 py-3 text-sm">
+                        <div class="flex flex-col gap-1">
+                            @if($nota->fecha_entrega_prioritaria)
+                                <span class="text-gray-700 font-medium">
+                                    {{ Carbon::parse($nota->fecha_entrega_prioritaria)->format('d/m/Y') }}
+                                </span>
+                                @if($nota->tieneFechaModificada())
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full" title="Fecha actualizada desde Nvgestion">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Modificada
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full" title="Fecha original de Softland">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Original
+                                    </span>
+                                @endif
+                            @else
+                                <span class="text-gray-400">-</span>
+                            @endif
+                        </div>
                     </td>
                     
                     {{-- Estado de Instalación --}}

@@ -45,7 +45,7 @@
         </div>
         
         {{-- Fila 2: Filtros con Formulario --}}
-        <form method="GET" action="{{ route('calendario') }}" class="flex flex-wrap gap-3 items-center">
+        <form method="GET" action="{{ route('calendario') }}" id="filtrosForm" class="flex flex-wrap gap-3 items-center">
             
             {{-- Búsqueda por Nota de Venta --}}
             <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 shadow-sm hover:shadow-md transition-shadow">
@@ -111,6 +111,24 @@
             
             {{-- Botones de Acción --}}
             <div class="flex items-center gap-2 flex-shrink-0">
+                {{-- Actualizar Fechas desde Nvgestion --}}
+                <button 
+                    type="button"
+                    id="btnActualizarFechas"
+                    class="p-2.5 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-all duration-200 group relative shadow-sm hover:shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="iconoActualizar">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {{-- Spinner de loading (oculto por defecto) --}}
+                    <svg class="w-5 h-5 animate-spin hidden" id="spinnerActualizar" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+                        Actualizar Fechas desde Nvgestion
+                    </span>
+                </button>
+                
                 {{-- Agenda Diaria --}}
                 <a href="{{ route('calendariodia') }}" 
                    class="p-2.5 border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-all duration-200 group relative shadow-sm hover:shadow-md">
@@ -133,8 +151,6 @@
                     </span>
                 </a>
                 
-             
-                
                 {{-- Limpiar Filtros --}}
                 <a 
                     href="{{ route('calendario') }}"
@@ -150,3 +166,133 @@
         </form>
     </div>
 </div>
+
+{{-- Modal de resultados de actualización --}}
+<div id="modalResultados" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-800">Actualización Completada</h3>
+            <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div id="contenidoModal" class="space-y-3">
+            <!-- Se llenará dinámicamente -->
+        </div>
+        <div class="mt-6 flex justify-end gap-2">
+            <button onclick="cerrarModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                Cerrar
+            </button>
+            <button onclick="recargarPagina()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                Recargar Página
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('btnActualizarFechas').addEventListener('click', function() {
+    const btn = this;
+    const icono = document.getElementById('iconoActualizar');
+    const spinner = document.getElementById('spinnerActualizar');
+    
+    // Deshabilitar botón y mostrar loading
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    icono.classList.add('hidden');
+    spinner.classList.remove('hidden');
+    
+    // Obtener los parámetros de filtro actuales
+    const formData = new FormData(document.getElementById('filtrosForm'));
+    const params = new URLSearchParams(formData);
+    
+    // Realizar la petición AJAX
+    fetch('{{ route("calendario.actualizar-fechas") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            nota_venta: formData.get('nota_venta'),
+            tipo_fecha: formData.get('tipo_fecha'),
+            fecha_desde: formData.get('fecha_desde'),
+            fecha_hasta: formData.get('fecha_hasta')
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Restaurar botón
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        icono.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        
+        if (data.success) {
+            mostrarResultados(data);
+        } else {
+            mostrarError(data.message);
+        }
+    })
+    .catch(error => {
+        // Restaurar botón en caso de error
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        icono.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        
+        mostrarError('Error al actualizar fechas: ' + error.message);
+    });
+});
+
+function mostrarResultados(data) {
+    const modal = document.getElementById('modalResultados');
+    const contenido = document.getElementById('contenidoModal');
+    
+    contenido.innerHTML = `
+        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+            <div class="flex items-center mb-2">
+                <svg class="w-5 h-5 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-green-700 font-semibold">Actualización exitosa</p>
+            </div>
+            <div class="ml-7 text-sm text-green-700 space-y-1">
+                <p><span class="font-semibold">Total procesadas:</span> ${data.total}</p>
+                <p><span class="font-semibold">Con fecha modificada:</span> ${data.actualizados}</p>
+                <p><span class="font-semibold">Sin cambios:</span> ${data.sin_cambios}</p>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function mostrarError(mensaje) {
+    const modal = document.getElementById('modalResultados');
+    const contenido = document.getElementById('contenidoModal');
+    
+    contenido.innerHTML = `
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-red-700 font-semibold">${mensaje}</p>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function cerrarModal() {
+    document.getElementById('modalResultados').classList.add('hidden');
+}
+
+function recargarPagina() {
+    window.location.reload();
+}
+</script>

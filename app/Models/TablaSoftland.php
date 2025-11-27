@@ -16,7 +16,7 @@ class TablaSoftland extends Model
      *
      * @var string
      */
-    protected $table = 'NotaVta_Actualiza'; // NOMBRE CORRECTO
+    protected $table = 'NotaVta_Actualiza';
     
     /**
      *
@@ -56,4 +56,36 @@ class TablaSoftland extends Model
         'nv_femision' => 'date',
         'nv_fentrega' => 'date',
     ];
+    
+    /**
+     * Relación con Nvgestion
+     */
+    public function nvgestion()
+    {
+        return $this->hasOne(Nvgestion::class, 'c_nventa', 'nv_folio');
+    }
+    
+    /**
+     * Accessor para obtener la fecha de entrega prioritaria
+     * Primero intenta traer c_fecha_modificada de Nvgestion
+     * Si no existe o es null, devuelve nv_fentrega
+     */
+    public function getFechaEntregaPrioritariaAttribute()
+    {
+        // Intentar obtener la fecha modificada de Nvgestion
+        if ($this->nvgestion && $this->nvgestion->c_fecha_modificada) {
+            return $this->nvgestion->c_fecha_modificada;
+        }
+        
+        // Si no existe, devolver la fecha de entrega de Softland
+        return $this->nv_fentrega;
+    }
+    
+    /**
+     * Método para verificar si tiene fecha modificada en Nvgestion
+     */
+    public function tieneFechaModificada()
+    {
+        return $this->nvgestion && $this->nvgestion->c_fecha_modificada !== null;
+    }
 }
