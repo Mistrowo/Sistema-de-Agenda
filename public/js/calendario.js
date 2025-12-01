@@ -24,9 +24,7 @@ function extraerBloque(cadenaCompleta) {
     return null;
 }
 var bloqueCompleto = document.getElementById('horaBloque')?.value;
-console.log('🔍 Bloque completo:', bloqueCompleto);
 var bloque = extraerBloque(bloqueCompleto);
-console.log('🔍 Bloque extraído:', bloque);
 
 function abrirModal() {
     document.getElementById("miModal").style.display = "flex";
@@ -90,7 +88,6 @@ function confirmacionYAbrirModalSeleccionDias1() {
         estado: document.querySelector('input[name="estado"]:checked')?.value || 'Calendarizado'
     };
     
-    console.log('💾 Datos guardados temporalmente:', window.datosModalTemp);
     
     abrirModalSeleccionDias1();
 }
@@ -179,7 +176,6 @@ if (!estado) {
         fecha_instalacion2: fechaInstalacion
     };
 
-    console.log('📤 Enviando datos:', datosParaEnviar);
 
     var guardarBtn = document.getElementById('guardarBtn');
     var iconoGuardar = document.getElementById('iconoGuardar');
@@ -249,7 +245,6 @@ function enviarDatos() {
     var fechaInstalacion = document.getElementById('fechaInstalacionModal').value;
     var estadoCheckbox = document.querySelector('input[name="estado"]:checked');
     var estado = estadoCheckbox ? estadoCheckbox.value : 'Calendarizado';
-    console.log('🔍 Estado seleccionado:', estado);
 
     var instaladoresSeleccionados = document.querySelectorAll('.instaladores-container input[type="checkbox"]:checked');
     var bloquesSeleccionados = document.querySelectorAll('.bloques-container input[type="checkbox"]:checked');
@@ -318,12 +313,10 @@ function enviarDatos() {
 }
 
 function guardarCambios() {
-    console.log('🎯 Función guardarCambios() ejecutada');
     
     cerrarModalSeleccionDias();
     
     var fechasSeleccionadas = document.getElementById('fechasSeleccionadas').value;
-    console.log('📅 Fechas del input:', fechasSeleccionadas);
     
     if (!fechasSeleccionadas || fechasSeleccionadas.trim() === '') {
         Swal.fire({
@@ -360,7 +353,6 @@ function guardarCambios() {
     
     // ✅ OBTENER FECHA ACTUAL DEL HEADER (la que está seleccionada)
     var fechaActualHeader = document.getElementById('fechaInstalacion2')?.value;
-    console.log('📅 Fecha actual del header:', fechaActualHeader);
     
     // ✅ COMBINAR: Fecha actual + Fechas nuevas seleccionadas
     var fechasArray = fechasSeleccionadas.split(',').map(f => f.trim());
@@ -368,11 +360,9 @@ function guardarCambios() {
     // Si la fecha actual no está en las seleccionadas, agregarla
     if (fechaActualHeader && !fechasArray.includes(fechaActualHeader)) {
         fechasArray.unshift(fechaActualHeader); // Agregar al inicio
-        console.log('✅ Fecha actual agregada:', fechaActualHeader);
     }
     
     var fechasCombinadas = fechasArray.join(', ');
-    console.log('📅 Fechas combinadas:', fechasCombinadas);
 
     var datosParaEnviar = {
         nota_venta: notaVenta,
@@ -387,7 +377,6 @@ function guardarCambios() {
         fechas: fechasCombinadas // ✅ Enviar fechas combinadas
     };
 
-    console.log('📤 Enviando datos:', datosParaEnviar);
 
     // Mostrar loading mientras se guarda
     Swal.fire({
@@ -409,9 +398,7 @@ function guardarCambios() {
         body: JSON.stringify(datosParaEnviar)
     })
     .then(response => {
-        console.log('📥 Status:', response.status);
         return response.text().then(text => {
-            console.log('📄 Respuesta completa:', text);
             try {
                 return JSON.parse(text);
             } catch (e) {
@@ -421,7 +408,6 @@ function guardarCambios() {
         });
     })
     .then(data => {
-        console.log('✅ Datos guardados:', data);
         
         Swal.fire({
             icon: 'success',
@@ -450,10 +436,8 @@ allowEscapeKey: false
 
 
 function guardarCambios1() {
-    console.log('🎯 Función guardarCambios1() ejecutada (asignación múltiple)');
     
     var fechasSeleccionadas = document.getElementById('fechasSeleccionadas1').value;
-    console.log('📅 Fechas del input:', fechasSeleccionadas);
     
     if (!fechasSeleccionadas || fechasSeleccionadas.trim() === '') {
         Swal.fire({
@@ -485,7 +469,6 @@ function guardarCambios1() {
     var observacionBloque3 = window.datosModalTemp.observacionBloque3;
     var estado = window.datosModalTemp.estado;
 
-    console.log('📦 Usando datos temporales:', window.datosModalTemp);
 
     var instaladoresSeleccionados = document.querySelectorAll('.instaladores-container input[type="checkbox"]:checked');
     var bloquesSeleccionados = document.querySelectorAll('.bloques-container input[type="checkbox"]:checked');
@@ -510,7 +493,6 @@ function guardarCambios1() {
         });
     });
 
-    console.log('📤 Enviando datos múltiples:', datosParaEnviar);
 
     // Mostrar loading
     Swal.fire({
@@ -532,14 +514,12 @@ function guardarCambios1() {
         body: JSON.stringify(datosParaEnviar)
     })
     .then(response => {
-        console.log('📥 Respuesta recibida:', response.status);
         if (!response.ok) {
             throw new Error('Error en la respuesta: ' + response.status);
         }
         return response.json();
     })
     .then(data => {
-        console.log('✅ Datos guardados:', data);
         
         // ✅ CERRAR MODAL DESPUÉS DE GUARDAR EXITOSAMENTE
         cerrarModalSeleccionDias1();
@@ -579,7 +559,6 @@ allowEscapeKey: false
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    console.log('✅ Calendario.js cargado');
     
     // =================================================
     // CONFIGURACIÓN INICIAL
@@ -605,7 +584,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // =================================================
     
     var dataBlocks = document.querySelectorAll('.data-block');
-    console.log('📊 Data blocks encontrados:', dataBlocks.length);
     
     dataBlocks.forEach(function(block) {
         block.addEventListener('click', function() {
@@ -615,7 +593,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            console.log('🖱️ Click en:', this.id);
             
             // ============================================
             // PASO 1: CARGAR DATOS DEL HEADER AL MODAL
@@ -626,7 +603,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var notaVentaModal = document.getElementById('notaVenta');
             if (notaVentaHeader && notaVentaModal) {
                 notaVentaModal.value = notaVentaHeader.value || '';
-                console.log('✅ Nota Venta:', notaVentaHeader.value);
             }
             
             // Cliente
@@ -634,7 +610,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var clienteModal = document.getElementById('cliente');
             if (clienteHeader && clienteModal) {
                 clienteModal.value = clienteHeader.value || '';
-                console.log('✅ Cliente:', clienteHeader.value);
             }
             
             // Descripción
@@ -642,7 +617,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var descripcionModal = document.getElementById('descripcionModal');
             if (descripcionHeader && descripcionModal) {
                 descripcionModal.value = descripcionHeader.value || '';
-                console.log('✅ Descripción:', descripcionHeader.value);
             }
             
             // Fecha Instalación
@@ -681,7 +655,6 @@ var bloqueId = partes[0] + '-' + partes[1] + '-' + partes[2]; // "bloque-a-2"
                     }
                 });
                 
-                console.log('✅ Bloque:', descripcion);
             }
             
             // Guardar bloque antiguo
@@ -719,7 +692,6 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
                     }
                 });
                 
-                console.log('✅ Instalador:', instaladorNombre);
             }
             
             // Guardar instalador antiguo
@@ -833,11 +805,8 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
     case 'Completar Campo':
     case '':
     case null:
-        // No marcar ninguno
-        console.log('⚠️ Sin estado definido');
         break;
     default:
-        console.log('⚠️ Estado desconocido:', data.estado);
 }
                 
    
@@ -1157,7 +1126,6 @@ if (botonEditar) {
         }
     }
     
-    console.log('✅ Todos los event listeners configurados');
 });
 
 
@@ -1300,4 +1268,3 @@ window.cambiarMes1 = function(direccion) {
     window.generarCalendario1(mesActual1, añoActual1);
 };
 
-console.log('✅ Funciones de calendario expuestas globalmente');

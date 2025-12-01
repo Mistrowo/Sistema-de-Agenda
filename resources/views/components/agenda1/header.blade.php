@@ -150,22 +150,40 @@
     <input type="hidden" id="descripcion" value="{{ $calendarioDef->descripcion ?? '' }}">
 </header>
 
-<!-- Scripts -->
 <script>
+    
     document.addEventListener('DOMContentLoaded', () => {
-        const primeraFecha = document.getElementById('fechaInstalacion2').value;
-        if (primeraFecha) mostrarInformacion(primeraFecha);
         
-        // ✅ Cargar zona guardada al iniciar
-        cargarZonaGuardada();
+        const primeraFecha = document.getElementById('fechaInstalacion2')?.value;
+        if (primeraFecha && typeof mostrarInformacion === 'function') {
+            mostrarInformacion(primeraFecha);
+        }
         
-        // ✅ Cargar zona cuando cambie la fecha
-        document.getElementById('fechaInstalacion2').addEventListener('change', function() {
-            cargarZonaGuardada();
-        });
-        
-        // ✅ Guardar con Enter en el input
+        const notaVentaNum = document.getElementById('notaVentaNum');
+        const fechaInstalacion2 = document.getElementById('fechaInstalacion2');
         const zonaInput = document.getElementById('zonaInput');
+        
+      
+        
+        setTimeout(() => {
+            cargarZonaGuardada();
+        }, 300);
+        
+        if (typeof window.calendarioJsCargado !== 'undefined') {
+            cargarZonaGuardada();
+        }
+        
+        if (fechaInstalacion2) {
+            fechaInstalacion2.addEventListener('change', function() {
+                
+                if (typeof mostrarInformacion === 'function') {
+                    mostrarInformacion(this.value);
+                }
+                
+                cargarZonaGuardada(); 
+            });
+        }
+        
         if (zonaInput) {
             zonaInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -176,12 +194,15 @@
         }
     });
     
-    // ✅ Función para cargar zona guardada
     function cargarZonaGuardada() {
         const notaVenta = document.getElementById('notaVentaNum')?.value;
         const fechaInstalacion = document.getElementById('fechaInstalacion2')?.value;
         
-        if (!notaVenta || !fechaInstalacion) return;
+        
+        if (!notaVenta || !fechaInstalacion) {
+            console.warn('⚠️ Faltan datos para cargar zona');
+            return;
+        }
         
         fetch('/agenda-def/obtener-zona', {
             method: 'POST',
@@ -194,20 +215,27 @@
                 fecha_instalacion2: fechaInstalacion
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            return response.json();
+        })
         .then(data => {
+            
             const zonaInput = document.getElementById('zonaInput');
             const btnGuardar = document.getElementById('btnGuardarZona');
             
-            // ✅ Si hay bloques guardados, habilitar el campo
+            if (!zonaInput || !btnGuardar) {
+                console.error('❌ No se encontraron los elementos zona');
+                return;
+            }
+            
             if (data.existe_bloque) {
                 zonaInput.disabled = false;
                 btnGuardar.disabled = false;
                 zonaInput.value = data.zona || '';
+                zonaInput.placeholder = 'Ingrese zona...';
                 zonaInput.classList.remove('opacity-50', 'cursor-not-allowed');
                 btnGuardar.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
-                // ❌ Si NO hay bloques, deshabilitar el campo
                 zonaInput.disabled = true;
                 btnGuardar.disabled = true;
                 zonaInput.value = '';
@@ -216,15 +244,16 @@
                 btnGuardar.classList.add('opacity-50', 'cursor-not-allowed');
             }
         })
-        .catch(error => console.error('Error al cargar zona:', error));
+        .catch(error => {
+        });
     }
     
-    // ✅ Función para guardar zona manualmente
     function guardarZonaManual() {
         const notaVenta = document.getElementById('notaVentaNum')?.value;
         const fechaInstalacion = document.getElementById('fechaInstalacion2')?.value;
         const zona = document.getElementById('zonaInput')?.value;
         const btn = document.getElementById('btnGuardarZona');
+        
         
         if (!notaVenta || !fechaInstalacion) {
             Swal.fire({
@@ -237,9 +266,8 @@
             return;
         }
         
-        // Cambiar ícono a loading
         const iconoOriginal = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
         btn.disabled = true;
         
         fetch('/agenda-def/guardar-zona', {
@@ -254,19 +282,19 @@
                 zona: zona
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            return response.json();
+        })
         .then(data => {
+            
             if (data.success) {
-                // Cambiar a check temporalmente
-                btn.innerHTML = '<i class="fas fa-check text-sm"></i>';
+                btn.innerHTML = '<i class="fas fa-check text-xs"></i>';
                 btn.classList.remove('bg-pink-500', 'hover:bg-pink-600');
                 btn.classList.add('bg-green-500');
                 
-                // Feedback visual en el input
                 const zonaInput = document.getElementById('zonaInput');
                 zonaInput.classList.add('ring-2', 'ring-green-400');
                 
-                // Volver al estado normal después de 1.5 segundos
                 setTimeout(() => {
                     btn.innerHTML = iconoOriginal;
                     btn.classList.remove('bg-green-500');
@@ -275,11 +303,10 @@
                     zonaInput.classList.remove('ring-2', 'ring-green-400');
                 }, 1500);
                 
-                console.log('✅ Zona guardada:', zona);
             }
         })
         .catch(error => {
-            console.error('Error al guardar zona:', error);
+            console.error('❌ Error al guardar zona:', error);
             btn.innerHTML = iconoOriginal;
             btn.disabled = false;
             

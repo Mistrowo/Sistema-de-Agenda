@@ -234,7 +234,6 @@ class AgendaDefController extends Controller
     }
 
     /**
-     * ✅ NUEVO: Eliminar múltiples registros de agenda
      */
     public function destroyMultiple(Request $request)
     {
@@ -352,7 +351,6 @@ class AgendaDefController extends Controller
             $datosActualizados['fecha_instalacion2'] = $fechaInstalacionNueva;
         }
 
-        // Actualizar el instalador con el nuevo valor
         if ($instaladorNuevo != '') {
             $datosActualizados['instalador'] = $instaladorNuevo;
         }
@@ -441,25 +439,6 @@ public function update2(Request $request)
     
 
 
-    public function agenda3()
-{
-    $calendarioDef = CalendarioDef::all();
-
-    $agendaItems = AgendaDef::all();
-
-
-    $fechasInstalacion =$fechasInstalacion = CalendarioDef::orderBy('fecha_instalacion', 'asc')
-    ->pluck('fecha_instalacion')
-    ->unique();
-
-
-
-    return view('agenda-def.agenda-globalkhem', [
-        'calendarioDefs' => $calendarioDef,
-        'agendaItems' => $agendaItems,
-        'fechasInstalacion' => $fechasInstalacion
-    ]);
-}
 
 
 
@@ -485,10 +464,6 @@ public function agenda()
 
 
 
-public function agenda2()
-{
-    return view('agenda-def.agendaindi');
-}
 
 
 public function showDetalle($id)
@@ -533,101 +508,7 @@ public function showDetalle($id)
 }
 
 
-public function showDetalle1($id)
-{
-    $calendarioDef1 = CalendarioDef::findOrFail($id);
 
-    $agendaItems1 = AgendaDef::all();
-    $fechaEntrega = optional($calendarioDef1->agendaDefs->first())->fecha_entrega;
-    $nota_resumida = optional($calendarioDef1->agendaDefs->first())->nota_resumida;
-    $instalador= optional($calendarioDef1->agendaDefs->first())->instalador;
-    $observacion = optional($calendarioDef1->agendaDefs->first())->observacion_bloque;
-   
-
-
-
-    $notaVenta = $calendarioDef1->nota_venta ?? 'No definido';
-    $cliente = $calendarioDef1->cliente ?? 'No definido'; 
-
-    $infoCombinada = "NV: " . $notaVenta . "\nCliente: " . $cliente;
-    
-
-    $instaladorSesion = session('usuario') ? session('usuario')->NOMBRE : null;
-
-    $bloque = AgendaDef::where('nota_venta', $calendarioDef1->nota_venta)
-    ->where('instalador', $instaladorSesion)
-    ->get()
-    ->pluck('bloque')
-    ->unique();
-
-    $fechasInstalacion2 = AgendaDef::where('nota_venta', $notaVenta)
-    ->where('instalador', $instaladorSesion) // Filtra por el instalador en sesión
-    ->select('fecha_instalacion2')
-    ->distinct()
-    ->pluck('fecha_instalacion2');
-    
-
-
-    $nombreUsuario = session('usuario')->NOMBRE;
-    $agendaDefFiltrados = $calendarioDef1->agendaDefs->filter(function ($item) use ($instaladorSesion) {
-        return $item->instalador == $instaladorSesion;
-    });
-
-    return view('agenda-def.agendaindi', [
-        'calendarioDef1' => $calendarioDef1,
-        'agendaItems1' => $agendaItems1,
-        'agendaDefFiltrados' => $agendaDefFiltrados,
-        'fechaEntrega' => $fechaEntrega,
-        'instalador' => $instalador,
-        'observacion' => $observacion,
-        'bloque' => $bloque,
-        'infoCombinada' => $infoCombinada,
-        'fechasInstalacion2' => $fechasInstalacion2,
-        'nombreUsuario' => $nombreUsuario
-
-
-
-    ]);
-}
-
-public function showDetalle3($id)
-{
-    $calendarioDef = CalendarioDef::findOrFail($id);
-    $agendaItems = AgendaDef::all();
-    $fechaInstalacion = $calendarioDef->first()->fecha_instalacion ?? null;
-    $observacion = optional($calendarioDef->agendaDefs->first())->observacion_bloque;
-    $notaresumida = optional($calendarioDef->agendaDefs->first())->nota_resumida;
-    $fechaEntrega = optional($calendarioDef->agendaDefs->first())->fecha_entrega;
-
-    $notaVenta = $calendarioDef->nota_venta ?? 'No definido';
-    $cliente = $calendarioDef->cliente ?? 'No definido';
-
-    $instaladoresFiltrados = ['STORETEK', 'SAN JOAQUIN', 'KHEMNOVA'];
-    $fechasInstalacion2 = AgendaDef::where('nota_venta', $notaVenta)
-        ->whereIn('instalador', $instaladoresFiltrados)
-        ->select('fecha_instalacion2')
-        ->distinct()
-        ->pluck('fecha_instalacion2')
-        ->toArray();
-
-    // Incluye la fecha de instalación de CalendarioDef al principio del array
-    if ($fechaInstalacion && !in_array($fechaInstalacion, $fechasInstalacion2)) {
-        array_unshift($fechasInstalacion2, $fechaInstalacion);
-    }
-
-    $infoCombinada = "NV: " . $notaVenta . "\nCliente: " . $cliente;
-
-    return view('agenda-def.agenda-khem', [
-        'calendarioDef' => $calendarioDef,
-        'agendaItems' => $agendaItems,
-        'fechaInstalacion' => $fechaInstalacion,
-        'observacion' => $observacion,
-        'notaresumida' => $notaresumida,
-        'fechaEntrega' => $fechaEntrega,
-        'infoCombinada' => $infoCombinada,
-        'fechasInstalacion2' => $fechasInstalacion2,
-    ]);
-}
 
 
 
@@ -726,25 +607,6 @@ public function getBlockDescription($blockCode)
 
 
 
-public function obtenerTransportistaPorBloque(Request $request)
-{
-    $bloque = $request->input('bloque');
-    $instaladorNombre = $request->input('instalador');
-
-
-
-    $agendaDef = AgendaDef::where('bloque', $bloque)
-                          ->where('instalador', $instaladorNombre)
-                          ->first();
-    $transportista = $agendaDef ? $agendaDef->transportista : 'Completar Campo';
-
-    return response()->json([
-        'bloque' => $bloque,
-        'instalador' => $instaladorNombre,
-        'transportista' => $transportista
-    ]);
-
-}
 
 public function obtenerNotaResumidaPorBloque(Request $request)
 {
@@ -1255,156 +1117,60 @@ public function showDetalleSoftland($folio)
     }
 }
 
-/**
- * Mostrar detalle de nota de venta desde Softland (Khemnova)
- */
-public function showDetalleSoftlandKhem($folio)
-{
-    try {
-        // Buscar en Softland
-        $notaSoftland = \App\Models\TablaSoftland::where('nv_folio', $folio)->firstOrFail();
-        
-        // Crear objeto temporal
-        $calendarioDef = new \stdClass();
-        $calendarioDef->id = $notaSoftland->nv_id;
-        $calendarioDef->nota_venta = $notaSoftland->nv_folio;
-        $calendarioDef->cliente = $notaSoftland->nv_cliente;
-        $calendarioDef->descripcion = $notaSoftland->nv_descripcion;
-        $calendarioDef->fecha_instalacion = $notaSoftland->nv_fentrega;
-        
-        // Obtener items de agenda
-        $agendaItems = AgendaDef::where('nota_venta', $folio)->get();
-        
-        $fechaInstalacion = $calendarioDef->fecha_instalacion ?? null;
-        $observacion = optional($agendaItems->first())->observacion_bloque;
-        $notaresumida = optional($agendaItems->first())->nota_resumida;
-        $fechaEntrega = optional($agendaItems->first())->fecha_entrega;
 
-        $instaladoresFiltrados = ['STORETEK', 'SAN JOAQUIN', 'KHEMNOVA'];
-        $fechasInstalacion2 = AgendaDef::where('nota_venta', $folio)
-            ->whereIn('instalador', $instaladoresFiltrados)
-            ->select('fecha_instalacion2')
-            ->distinct()
-            ->pluck('fecha_instalacion2')
-            ->toArray();
 
-        if ($fechaInstalacion && !in_array($fechaInstalacion, $fechasInstalacion2)) {
-            array_unshift($fechasInstalacion2, $fechaInstalacion);
-        }
 
-        $infoCombinada = "NV: " . $calendarioDef->nota_venta . "\nCliente: " . $calendarioDef->cliente;
-
-        return view('agenda-def.agenda-khem', [
-            'calendarioDef' => $calendarioDef,
-            'agendaItems' => $agendaItems,
-            'fechaInstalacion' => $fechaInstalacion,
-            'observacion' => $observacion,
-            'notaresumida' => $notaresumida,
-            'fechaEntrega' => $fechaEntrega,
-            'infoCombinada' => $infoCombinada,
-            'fechasInstalacion2' => $fechasInstalacion2,
-        ]);
-        
-    } catch (\Exception $e) {
-        Log::error('Error al cargar detalle Khem: ' . $e->getMessage());
-        return redirect()->route('calendario4')->with('error', 'No se encontró la nota de venta.');
-    }
-}
-
-/**
- * Mostrar detalle de nota de venta desde Softland (Instalador)
- */
-public function showDetalleSoftlandInstalador($folio)
-{
-    try {
-        // Buscar en Softland
-        $notaSoftland = \App\Models\TablaSoftland::where('nv_folio', $folio)->firstOrFail();
-        
-        // Crear objeto temporal
-        $calendarioDef1 = new \stdClass();
-        $calendarioDef1->id = $notaSoftland->nv_id;
-        $calendarioDef1->nota_venta = $notaSoftland->nv_folio;
-        $calendarioDef1->cliente = $notaSoftland->nv_cliente;
-        $calendarioDef1->descripcion = $notaSoftland->nv_descripcion;
-        $calendarioDef1->fecha_instalacion = $notaSoftland->nv_fentrega;
-        
-        // Obtener items de agenda
-        $agendaItems1 = AgendaDef::where('nota_venta', $folio)->get();
-        
-        $instaladorSesion = session('usuario') ? session('usuario')->NOMBRE : null;
-        
-        // Filtrar agendas por instalador de sesión
-        $agendaDefFiltrados = $agendaItems1->where('instalador', $instaladorSesion);
-        
-        $fechaEntrega = optional($agendaDefFiltrados->first())->fecha_entrega;
-        $nota_resumida = optional($agendaDefFiltrados->first())->nota_resumida;
-        $instalador = optional($agendaDefFiltrados->first())->instalador;
-        $observacion = optional($agendaDefFiltrados->first())->observacion_bloque;
-        
-        $bloque = AgendaDef::where('nota_venta', $folio)
-            ->where('instalador', $instaladorSesion)
-            ->pluck('bloque')
-            ->unique();
-
-        $fechasInstalacion2 = AgendaDef::where('nota_venta', $folio)
-            ->where('instalador', $instaladorSesion)
-            ->select('fecha_instalacion2')
-            ->distinct()
-            ->pluck('fecha_instalacion2');
-        
-        $infoCombinada = "NV: " . $calendarioDef1->nota_venta . "\nCliente: " . $calendarioDef1->cliente;
-        
-        $nombreUsuario = session('usuario')->NOMBRE;
-
-        return view('agenda-def.agendaindi', [
-            'calendarioDef1' => $calendarioDef1,
-            'agendaItems1' => $agendaItems1,
-            'agendaDefFiltrados' => $agendaDefFiltrados,
-            'fechaEntrega' => $fechaEntrega,
-            'instalador' => $instalador,
-            'observacion' => $observacion,
-            'bloque' => $bloque,
-            'infoCombinada' => $infoCombinada,
-            'fechasInstalacion2' => $fechasInstalacion2,
-            'nombreUsuario' => $nombreUsuario
-        ]);
-        
-    } catch (\Exception $e) {
-        Log::error('Error al cargar detalle instalador: ' . $e->getMessage());
-        return redirect()->route('calendario3')->with('error', 'No se encontró la nota de venta.');
-    }
-}
-// ✅ REEMPLAZAR el método obtenerZona en AgendaDefController.php con este:
 
 /**
  * Obtener zona guardada para una nota de venta y fecha específica
  */
+
+
 public function obtenerZona(Request $request)
 {
     try {
         $notaVenta = $request->input('nota_venta');
         $fechaInstalacion = $request->input('fecha_instalacion2');
         
+        Log::info('Obteniendo zona:', [
+            'nota_venta' => $notaVenta,
+            'fecha_instalacion2' => $fechaInstalacion
+        ]);
+        
         // Buscar el primer registro que coincida
         $agenda = AgendaDef::where('nota_venta', $notaVenta)
                            ->where('fecha_instalacion2', $fechaInstalacion)
                            ->first();
         
-        return response()->json([
+        $resultado = [
             'success' => true,
             'zona' => $agenda ? $agenda->zona : null,
-            'existe_bloque' => $agenda !== null  // ✅ Indica si existe al menos un bloque
-        ]);
+            'existe_bloque' => $agenda !== null  // ✅ Verifica si existe al menos un bloque
+        ];
+        
+        Log::info('Resultado obtenerZona:', $resultado);
+        
+        return response()->json($resultado);
         
     } catch (\Exception $e) {
-        Log::error('Error al obtener zona: ' . $e->getMessage());
+        Log::error('Error al obtener zona:', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ]);
+        
         return response()->json([
             'success' => false,
             'zona' => null,
-            'existe_bloque' => false
-        ]);
+            'existe_bloque' => false,
+            'error' => $e->getMessage()
+        ], 500);
     }
 }
+
+/**
+ * Guardar zona para todos los bloques de una nota de venta y fecha
+ */
 public function guardarZona(Request $request)
 {
     try {
@@ -1412,12 +1178,31 @@ public function guardarZona(Request $request)
         $fechaInstalacion = $request->input('fecha_instalacion2');
         $zona = $request->input('zona');
         
+        Log::info('Guardando zona:', [
+            'nota_venta' => $notaVenta,
+            'fecha_instalacion2' => $fechaInstalacion,
+            'zona' => $zona
+        ]);
+        
+        // ✅ VALIDAR que exista al menos un bloque antes de guardar
+        $existeBloque = AgendaDef::where('nota_venta', $notaVenta)
+                                  ->where('fecha_instalacion2', $fechaInstalacion)
+                                  ->exists();
+        
+        if (!$existeBloque) {
+            Log::warning('No se encontraron bloques para guardar zona');
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay bloques guardados para esta nota de venta y fecha'
+            ], 400);
+        }
+        
         // Actualizar todos los registros que coincidan
         $actualizados = AgendaDef::where('nota_venta', $notaVenta)
                                   ->where('fecha_instalacion2', $fechaInstalacion)
                                   ->update(['zona' => $zona]);
         
-        Log::info("Zona actualizada: {$actualizados} registro(s) para NV {$notaVenta}");
+        Log::info("Zona actualizada exitosamente: {$actualizados} registro(s) para NV {$notaVenta}");
         
         return response()->json([
             'success' => true,
@@ -1426,12 +1211,20 @@ public function guardarZona(Request $request)
         ]);
         
     } catch (\Exception $e) {
-        Log::error('Error al guardar zona: ' . $e->getMessage());
+        Log::error('Error al guardar zona:', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
         return response()->json([
             'success' => false,
             'message' => 'Error al guardar zona: ' . $e->getMessage()
         ], 500);
     }
 }
+
+
 }
 

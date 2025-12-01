@@ -30,8 +30,7 @@ var bloqueDescripcion = {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-fecha-instalacion]').forEach(function(element) {
-        console.log('Fecha de instalación (data-fecha-instalacion):', element.getAttribute('data-fecha-instalacion'));
-        console.log('Contenido del elemento:', element.innerHTML);
+        
     });
 });
 

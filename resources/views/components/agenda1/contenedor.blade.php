@@ -286,7 +286,6 @@
 (function() {
     'use strict';
     
-    console.log('📅 Iniciando script de calendario con selección múltiple');
     
     let registrosSeleccionados = [];
     
@@ -313,7 +312,6 @@
         
         if (!existe) {
             registrosSeleccionados.push(info);
-            console.log('✅ Registro agregado:', info);
         }
         actualizarContador();
     }
@@ -325,7 +323,6 @@
               r.bloque === info.bloque &&
               r.fecha_instalacion2 === info.fecha_instalacion2)
         );
-        console.log('❌ Registro removido:', info);
         actualizarContador();
     }
     
@@ -411,7 +408,6 @@
             showLoaderOnConfirm: true,
             allowOutsideClick: () => !Swal.isLoading(),
             preConfirm: () => {
-                console.log('🗑️ Enviando solicitud de eliminación:', registrosSeleccionados);
                 
                 return fetch('{{ route("eliminar-agenda-multiples") }}', {
                     method: 'POST',
@@ -430,7 +426,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('✅ Respuesta del servidor:', data);
                     
                     if (!data.success) {
                         throw new Error(data.message || 'Error desconocido');
@@ -480,7 +475,6 @@
             return;
         }
         
-        console.log('✅ Selector encontrado:', selector.id);
         
         var urlParams = new URLSearchParams(window.location.search);
         var fechaURL = urlParams.get('fecha');
@@ -491,7 +485,6 @@
                 var valorOpcion = opciones[i].value;
                 if (valorOpcion.split(' ')[0] === fechaURL.split(' ')[0]) {
                     selector.selectedIndex = i;
-                    console.log('✅ Selector actualizado a:', valorOpcion);
                     break;
                 }
             }

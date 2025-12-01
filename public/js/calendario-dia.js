@@ -164,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 _token: $('meta[name="csrf-token"]').attr('content') // Token de seguridad
             };
 
-            console.log('Datos a enviar:', dataToSend); 
 
             var confirmacion = confirm('¿Desea modificar los datos?');
             if (confirmacion) {
@@ -173,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: dataToSend,
                     success: function(response) {
-                        console.log(response);
                         alert('Requerimiento actualizado con éxito');
                         location.reload(); 
                     },

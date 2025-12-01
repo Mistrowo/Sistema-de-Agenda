@@ -85,16 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
             modalInput.value = descripcion;
             var modal = document.getElementById('miModal');
             modal.style.display = 'block';
-            console.log('bloqueId original:', bloqueId);
 
             var bloqueIdModificado = bloqueId.split('-')[1].charAt(0) + '-' + bloqueId.split('-')[1].slice(1);
             bloqueIdModificado = bloqueIdModificado.toUpperCase();
-            console.log('bloqueId modificado:', bloqueIdModificado);
 
             var headerItems = document.querySelectorAll('.schedule-header .header-item');
             var columnIndex = Array.prototype.indexOf.call(block.parentNode.children, block);
             var instaladorNombre = columnIndex > 0 ? headerItems[columnIndex].textContent : '';
-            console.log(instaladorNombre);
 
             var fechaSeleccionada = document.getElementById('fechaInstalacion2').value;
 

@@ -41,7 +41,6 @@ Route::group(['prefix' => 'agenda-def','middleware' => ['custom.session']], func
     Route::post('/store3', [AgendaDefController::class, 'store3'])->name('agenda_def.store3');
 
     Route::delete('/eliminar', [AgendaDefController::class, 'destroy1'])->name('eliminar-agenda-def');
-    // ✅ NUEVA RUTA: Eliminar múltiples registros
     Route::post('/eliminar-multiples', [AgendaDefController::class, 'destroyMultiple'])->name('eliminar-agenda-multiples');
     
     Route::put('/update-observacion/{id}', [AgendaDefController::class, 'updateObservacion'])->name('agenda-def.update-observacion');
@@ -50,6 +49,9 @@ Route::group(['prefix' => 'agenda-def','middleware' => ['custom.session']], func
 
     Route::get('/fechas-entrega-instalador/{nombreInstalador}', [AgendaDefController::class, 'obtenerFechasEntregaInstalador']);
     Route::post('/ruta-para-guardar-multiple', [AgendaDefController::class, 'guardarMultiples']);
+    
+    Route::post('/obtener-zona', [AgendaDefController::class, 'obtenerZona']);
+    Route::post('/guardar-zona', [AgendaDefController::class, 'guardarZona']);
 });
 
 Route::post('/ruta-para-obtener-transportista', [AgendaDefController::class, 'obtenerTransportistaPorBloque']);	
@@ -71,6 +73,3 @@ Route::post('/ruta-para-obtener-estado', [AgendaDefController::class, 'obtenerEs
 Route::post('/ruta-para-obtener-estado2', [AgendaDefController::class, 'obtenerEstado2']);
 
 Route::post('/calendario-def/{id}/actualizar-proyecto', [CalendarioDefController::class, 'actualizarProyecto'])->name('calendario-def.actualizar-proyecto');
-
-Route::post('/obtener-zona', [AgendaDefController::class, 'obtenerZona']);
-Route::post('/guardar-zona', [AgendaDefController::class, 'guardarZona']);

@@ -20,18 +20,14 @@ class CalendarioDefController extends Controller
         $this->calendarioService = $calendarioService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+   
     public function create()
     {
         $calendarioDef = new CalendarioDef();
         return view('calendario-def.create', compact('calendarioDef'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+   
     public function store(Request $request)
     {
         request()->validate(CalendarioDef::$rules);
@@ -42,9 +38,7 @@ class CalendarioDefController extends Controller
             ->with('success', 'CalendarioDef created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+   
     public function show($id)
     {
         $calendarioDef = CalendarioDef::find($id);
@@ -52,9 +46,7 @@ class CalendarioDefController extends Controller
         return view('calendario-def.show', compact('calendarioDef'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit($id)
     {
         $calendarioDef = CalendarioDef::find($id);
@@ -62,9 +54,7 @@ class CalendarioDefController extends Controller
         return view('calendario-def.edit', compact('calendarioDef'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, CalendarioDef $calendarioDef)
     {
         request()->validate([
@@ -81,9 +71,7 @@ class CalendarioDefController extends Controller
             ->with('success', 'CalendarioDef actualizado exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+   
     public function destroy($id)
     {
         $calendarioDef = CalendarioDef::findOrFail($id);
@@ -92,9 +80,6 @@ class CalendarioDefController extends Controller
         return redirect()->route('calendario')->with('success', 'Registro eliminado con éxito');
     }
 
-    /**
-     * Mostrar calendario principal con filtros
-     */
     public function calendario(Request $request)
     {
         try {
@@ -111,9 +96,7 @@ class CalendarioDefController extends Controller
         return view('calendario-def.listado', compact('notasVentaSoftland', 'notasConAgenda'));
     }
 
-    /**
-     * Actualizar masivamente las fechas de entrega desde Nvgestion
-     */
+   
     public function actualizarFechasDesdeNvgestion(Request $request)
     {
         try {
@@ -137,9 +120,7 @@ class CalendarioDefController extends Controller
         }
     }
 
-    /**
-     * Calendario filtrado por instalador (con rango de fechas)
-     */
+    
     public function calendario3(Request $request)
     {
         $nombreInstalador = session('usuario') ? session('usuario')->NOMBRE : null;
@@ -148,9 +129,7 @@ class CalendarioDefController extends Controller
         return view('calendario-def.listado2', compact('calendario2'));
     }
 
-    /**
-     * Actualizar proyecto vía AJAX
-     */
+    
     public function actualizarProyecto(Request $request, $id)
     {
         try {
@@ -163,18 +142,14 @@ class CalendarioDefController extends Controller
         }
     }
 
-    /**
-     * Calendario para Khemnova con porcentajes de despacho
-     */
+    
     public function calendario4(Request $request)
     {
         $calendario = $this->calendarioService->obtenerCalendarioConDespacho($request);
         return view('calendario-def.listado-khem', compact('calendario'));
     }
 
-    /**
-     * Agenda individual del instalador
-     */
+    
     public function calendario2()
     {
         $nombreInstalador = session('usuario') ? session('usuario')->NOMBRE : null;

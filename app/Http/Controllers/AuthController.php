@@ -42,7 +42,6 @@ class AuthController extends Controller
         } else {
             Log::warning('Falló el inicio de sesión', ['EMAIL' => $credentials['email']]);
     
-            // Aquí es donde puedes llamar a tu middleware
             $request->session()->put('failed_login', true);
             
             return back()->withErrors([

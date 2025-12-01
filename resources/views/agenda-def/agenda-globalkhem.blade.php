@@ -505,7 +505,6 @@
         <script type="text/javascript">
             document.addEventListener('DOMContentLoaded', (event) => {
                 let fechasInstalacion = @json($fechasInstalacion);
-                console.log(fechasInstalacion);
                 let indiceActual = 0;
             
                 document.getElementById('nextDayButton').addEventListener('click', function() {

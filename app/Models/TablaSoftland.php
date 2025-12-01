@@ -25,14 +25,12 @@ class TablaSoftland extends Model
     protected $primaryKey = 'nv_id';
     
     /**
-     * Indica si el modelo debe usar timestamps.
      *
      * @var bool
      */
     public $timestamps = false;
     
     /**
-     * Los atributos que son asignables en masa.
      *
      * @var array
      */
@@ -48,7 +46,6 @@ class TablaSoftland extends Model
     ];
     
     /**
-     * Los atributos que deben ser convertidos a tipos nativos.
      *
      * @var array
      */
@@ -58,26 +55,20 @@ class TablaSoftland extends Model
     ];
     
     /**
-     * Relación con Nvgestion
      */
     public function nvgestion()
     {
         return $this->hasOne(Nvgestion::class, 'c_nventa', 'nv_folio');
     }
     
-    /**
-     * Accessor para obtener la fecha de entrega prioritaria
-     * Primero intenta traer c_fecha_modificada de Nvgestion
-     * Si no existe o es null, devuelve nv_fentrega
-     */
+    
+    
     public function getFechaEntregaPrioritariaAttribute()
     {
-        // Intentar obtener la fecha modificada de Nvgestion
         if ($this->nvgestion && $this->nvgestion->c_fecha_modificada) {
             return $this->nvgestion->c_fecha_modificada;
         }
         
-        // Si no existe, devolver la fecha de entrega de Softland
         return $this->nv_fentrega;
     }
     

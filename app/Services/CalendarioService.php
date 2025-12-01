@@ -178,7 +178,6 @@ class CalendarioService
             ->whereBetween('fecha_instalacion', [$request->fecha_desde, $request->fecha_hasta]);
         
         $calendario = $query->get()->map(function ($item) {
-            // Verificar si está calendarizado
             $item->calendarizado = $item->agendaDefs->contains(function ($agendaDef) {
                 return !empty($agendaDef->instalador);
             });
@@ -237,7 +236,6 @@ class CalendarioService
     {
         $calendarioDef->estado_despacho = $estadoDespacho;
         
-        // Solo actualiza el comentario si estado_despacho no es 'Finalizado' y se proporciona
         if ($estadoDespacho != 'Finalizado' && $comentario) {
             $calendarioDef->comentario = $comentario;
         }
