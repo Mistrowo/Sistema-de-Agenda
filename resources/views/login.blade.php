@@ -84,16 +84,7 @@
                         </div>
                     </div>
 
-                    <!-- Recordar sesión -->
-                    <div class="flex items-center">
-                        <input 
-                            id="remember" 
-                            name="remember" 
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                        >
-
-                    </div>
+                  
 
                     <button 
                         type="submit"
