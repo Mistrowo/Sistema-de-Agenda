@@ -18,7 +18,7 @@
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             
             <!-- Header con logo -->
-            <div class="p-8 pb-6 bg-gradient-to-r  to-cyan-50">
+            <div class="p-8 pb-6 bg-gradient-to-r from-blue-50 to-cyan-50">
                 <!-- Logo -->
                 <div class="text-center mb-4">
                     <img src="https://clientes.ohffice.cl/storage/logo-ohffice-azul.jpeg" 
@@ -40,12 +40,28 @@
 
             <!-- Formulario -->
             <div class="p-8">
+                <!-- ✅ Mostrar errores si existen -->
+                @if ($errors->any())
+                    <div class="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-red-700 font-medium">
+                                    {{ $errors->first() }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <form method="POST" action="/login" class="space-y-5">
                     @csrf
                     
                     <!-- Campo Email -->
                     <div>
-                        <label for="email" class="block text-sm font-bold text-gray-700 mb-2">
+                        <label for="EMAIL" class="block text-sm font-bold text-gray-700 mb-2">
                             Correo Electrónico
                         </label>
                         <div class="relative">
@@ -53,20 +69,21 @@
                                 <i class="fas fa-envelope text-blue-500"></i>
                             </div>
                             <input 
-                                id="email" 
-                                name="email" 
+                                id="EMAIL" 
+                                name="EMAIL"
                                 type="email" 
                                 required 
-                                autofocus 
+                                autofocus
+                                value="{{ old('EMAIL') }}"
                                 placeholder="usuario@ohffice.cl"
-                                class="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                                class="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all @error('email') border-red-500 @enderror"
                             >
                         </div>
                     </div>
 
                     <!-- Campo Password -->
                     <div>
-                        <label for="password" class="block text-sm font-bold text-gray-700 mb-2">
+                        <label for="CONTRASENA" class="block text-sm font-bold text-gray-700 mb-2">
                             Contraseña
                         </label>
                         <div class="relative">
@@ -74,18 +91,17 @@
                                 <i class="fas fa-lock text-blue-500"></i>
                             </div>
                             <input 
-                                id="password" 
-                                name="password" 
+                                id="CONTRASENA" 
+                                name="CONTRASENA"
                                 type="password" 
                                 required 
                                 placeholder="••••••••••"
-                                class="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                                class="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all @error('password') border-red-500 @enderror"
                             >
                         </div>
                     </div>
 
-                  
-
+                    <!-- Botón Submit -->
                     <button 
                         type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2"
@@ -96,6 +112,7 @@
                 </form>
             </div>
 
+            <!-- Footer -->
             <div class="px-8 py-5 bg-gray-50 border-t border-gray-100">
                 <div class="text-center">
                     <p class="text-xs text-gray-500 font-medium">
