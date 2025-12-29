@@ -197,7 +197,7 @@
                                    id="confirmedCheckbox" name="estado" value="Calendarizado">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                                <span class="text-sm font-medium text-slate-700">Confirmado</span>
+                                <span class="text-sm font-medium text-slate-700">Agendado</span>
                             </div>
                         </label>
 

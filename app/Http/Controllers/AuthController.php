@@ -19,10 +19,9 @@ class AuthController extends Controller
         Log::info('Intento de inicio de sesión', ['EMAIL' => $credentials['email']]);
     
         if (Auth::attempt($credentials)) {
-            Log::info('Usuario en sesión', ['user' => Auth::user()]);
-            Log::info('Redirigiendo al dashboard');
-    
             $usuario = Auth::user();
+            
+            Log::info('Usuario en sesión', ['user' => $usuario]);
     
             session([
                 'usuario' => $usuario,
@@ -31,17 +30,11 @@ class AuthController extends Controller
 
             $request->session()->put('usuario', $usuario);
     
-            if ($usuario->ROL == 1) {
-                return redirect()->route('calendario');
-            } if ($usuario->ROL == 2) {
-                return redirect()->route('calendario4');
-            } if ($usuario->ROL == 3){
-                return redirect()->route('calendario3');
-            }
+            // Todos los roles van a la misma ruta principal
+            return redirect()->route('calendario');
     
         } else {
             Log::warning('Falló el inicio de sesión', ['EMAIL' => $credentials['email']]);
-    
             $request->session()->put('failed_login', true);
             
             return back()->withErrors([
@@ -50,22 +43,15 @@ class AuthController extends Controller
             ]);
         }
     }
-    
-    
-    
 
     public function logout()
-{
-    Log::info('Cierre de sesión del usuario', ['user' => Auth::user()]);
-    
-    Auth::logout();
+    {
+        Log::info('Cierre de sesión del usuario', ['user' => Auth::user()]);
+        
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
 
-     request()->session()->invalidate();
-     request()->session()->regenerateToken();
-
-    return redirect('/'); 
+        return redirect('/'); 
+    }
 }
-
-}
-
-

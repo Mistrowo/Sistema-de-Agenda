@@ -934,15 +934,15 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
         });
     }
     
-    var botonEliminar = document.getElementById('botonEliminar');
-    if (botonEliminar) {
-        botonEliminar.addEventListener('click', function() {
-            var notaVenta = document.getElementById('notaVenta').value;
-            var instalador = document.getElementById('instalador').value;
-            var bloqueCompleto = document.getElementById('horaBloque').value;
-            var bloque = extraerBloque(bloqueCompleto);
+   var botonEliminar = document.getElementById('botonEliminar');
+if (botonEliminar) {
+    botonEliminar.addEventListener('click', function() {
+        var notaVenta = document.getElementById('notaVenta').value;
+        var instalador = document.getElementById('instalador').value;
+        var bloqueCompleto = document.getElementById('horaBloque').value;
+        var bloque = extraerBloque(bloqueCompleto);
 
-           Swal.fire({
+        Swal.fire({
             title: '¿Estás seguro?',
             text: "Esta acción eliminará el requerimiento",
             icon: 'warning',
@@ -963,31 +963,48 @@ if (columnIndex > 0 && headerItems[columnIndex]) {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Eliminado!',
-                        text: 'El requerimiento ha sido eliminado',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    // ✅ VERIFICAR SI FUE DENEGADO POR PERMISOS
+                    if (data.permissionDenied) {
+                        // El interceptor ya mostró el Sweet Alert de permiso denegado
+                        return;
+                    }
+                    
+                    // ✅ VERIFICAR SI FUE EXITOSO
+                    if (data.success !== false) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Eliminado!',
+                            text: 'El requerimiento ha sido eliminado',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'No se pudo eliminar el requerimiento'
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo eliminar el requerimiento'
-                    });
+                    // Solo mostrar error si no es permiso denegado
+                    if (error.message !== 'Permiso denegado') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo eliminar el requerimiento'
+                        });
+                    }
                 });
             }
         });
+    });
+}
     
-        });
-    }
-    
-   var botonEditar = document.getElementById('botoneditar');
+ var botonEditar = document.getElementById('botoneditar');
 if (botonEditar) {
     botonEditar.addEventListener('click', function() {
         var notaVenta = document.getElementById('notaVenta').value;
@@ -1021,7 +1038,6 @@ if (botonEditar) {
             instalador_nuevo: instaladorNuevo
         };
 
-        // ✅ REEMPLAZAR confirm() POR SWAL
         Swal.fire({
             title: '¿Editar requerimiento?',
             text: "Se actualizarán los datos del requerimiento",
@@ -1033,7 +1049,6 @@ if (botonEditar) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Mostrar loading
                 Swal.fire({
                     title: 'Actualizando...',
                     text: 'Por favor espere',
@@ -1052,31 +1067,41 @@ if (botonEditar) {
                     },
                     body: JSON.stringify(dataToSend)
                 })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        return response.text().then(text => { throw new Error(text) });
-                    }
-                })
+                .then(response => response.json())
                 .then(data => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Actualizado!',
-                        text: 'El requerimiento ha sido actualizado',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    // ✅ VERIFICAR SI FUE DENEGADO POR PERMISOS
+                    if (data.permissionDenied) {
+                        return;
+                    }
+                    
+                    // ✅ VERIFICAR SI FUE EXITOSO
+                    if (data.success !== false) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'El requerimiento ha sido actualizado',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'No se pudo actualizar el requerimiento'
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo actualizar el requerimiento'
-                    });
+                    if (error.message !== 'Permiso denegado') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo actualizar el requerimiento'
+                        });
+                    }
                 });
             }
         });
@@ -1267,4 +1292,56 @@ window.cambiarMes1 = function(direccion) {
     }
     window.generarCalendario1(mesActual1, añoActual1);
 };
+
+(function() {
+    const originalFetch = window.fetch;
+    
+    window.fetch = function(...args) {
+        return originalFetch(...args).then(response => {
+            if (response.status === 403) {
+                return response.json()
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: data.title || 'Acción no permitida',
+                            text: data.message || 'No tienes permisos para realizar esta acción. Solo puedes visualizar.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#d33'
+                        });
+                        
+                        return {
+                            ok: false,
+                            status: 403,
+                            json: () => Promise.resolve({ 
+                                success: false, 
+                                permissionDenied: true,
+                                message: 'Permiso denegado' 
+                            })
+                        };
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Acción no permitida',
+                            text: 'No tienes permisos para realizar esta acción. Solo puedes visualizar.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#d33'
+                        });
+                        
+                        return {
+                            ok: false,
+                            status: 403,
+                            json: () => Promise.resolve({ 
+                                success: false, 
+                                permissionDenied: true 
+                            })
+                        };
+                    });
+            }
+            
+            return response;
+        });
+    };
+})();
+
 
