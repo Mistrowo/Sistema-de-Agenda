@@ -32,8 +32,11 @@ class CalendarioService
             // Aplicar filtros
             $query = $this->aplicarFiltros($query, $request);
             
-            // Ordenar y paginar
-            $notasVentaSoftland = $query->orderBy('nv_femision', 'desc')
+            // Filtrar solo estados Aprobado (A) y Pendiente (P)
+            $query->whereIn('nv_estado', ['A', 'P']);
+            
+            // Ordenar por folio descendente (más reciente a más viejo) y paginar
+            $notasVentaSoftland = $query->orderBy('nv_folio', 'desc')
                                        ->paginate(50)
                                        ->appends($request->all());
             

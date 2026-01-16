@@ -197,13 +197,13 @@
                                    id="confirmedCheckbox" name="estado" value="Calendarizado">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                                <span class="text-sm font-medium text-slate-700">Agendado</span>
+                                <span class="text-sm font-medium text-slate-700">Calendarizado</span>
                             </div>
                         </label>
 
                         <!-- Post Venta -->
                         <label class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border-2 border-emerald-200 rounded-lg hover:bg-emerald-100 cursor-pointer transition-all min-w-[160px]">
-                            <input type="checkbox" class="status-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" 
+                             <input type="checkbox" class="status-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" 
                                    id="postSaleCheckbox" name="estado" value="Post-Venta">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>

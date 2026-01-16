@@ -113,21 +113,21 @@
                     </p>
                 </div>
 
-                <!-- Fecha Entrega -->
-                <div class="group relative bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-4 border border-orange-200 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i class="fas fa-truck text-orange-600 text-sm"></i>
-                        <span class="text-[10px] font-black text-orange-700 uppercase tracking-wider">Fecha Entrega</span>
-                    </div>
-                    <p class="text-base font-bold text-gray-800">
-                        {{ $calendarioDef->fecha_fabril ? \Carbon\Carbon::parse($calendarioDef->fecha_fabril)->format('d/m/Y') : '—' }}
-                    </p>
-                </div>
+             <!-- Fecha Entrega -->
+<div class="group relative bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-4 border border-orange-200 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+    <div class="flex items-center gap-2 mb-2">
+        <i class="fas fa-calendar-alt text-orange-600 text-sm"></i>
+        <span class="text-[10px] font-black text-orange-700 uppercase tracking-wider">Fecha Entrega</span>
+    </div>
+    <p class="text-base font-bold text-gray-800">
+        {{ $calendarioDef->fecha_fabril ? \Carbon\Carbon::parse($calendarioDef->fecha_fabril)->format('d/m/Y') : '—' }}
+    </p>
+</div>
 
                 <!-- Fecha Instalación (Selector) -->
                 <div class="group relative bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl p-4 border border-cyan-200 hover:border-cyan-400 hover:shadow-lg transition-all duration-300">
                     <div class="flex items-center gap-2 mb-2">
-                        <i class="fas fa-tools text-cyan-600 text-sm"></i>
+                        <i class="fas fa-calendar text-cyan-600 text-sm"></i>
                         <span class="text-[10px] font-black text-cyan-700 uppercase tracking-wider">Fecha Instalación</span>
                     </div>
                     <select id="fechaInstalacion2" onchange="mostrarInformacion(this.value)"
