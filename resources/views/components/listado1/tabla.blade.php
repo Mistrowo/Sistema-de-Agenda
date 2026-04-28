@@ -31,8 +31,8 @@ use Carbon\Carbon;
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">N°</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Folio</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Descripción</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Cliente</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Descripción</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Vend.</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">F. Emisión</th>
@@ -52,10 +52,10 @@ use Carbon\Carbon;
                     <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $counter++ }}</td>
                     <td class="px-4 py-3 text-sm font-bold text-blue-600">{{ $nota->nv_folio }}</td>
                     <td class="px-4 py-3 text-sm text-gray-700">
-                        {{ Str::limit($nota->nv_descripcion, 40) }}
+                        {{ Str::limit($nota->nv_cliente, 30) }}
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700">
-                        {{ Str::limit($nota->nv_cliente, 30) }}
+                        {{ Str::limit($nota->nv_descripcion, 40) }}
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ $nota->nv_vend ?? '-' }}</td>
                     <td class="px-4 py-3 text-sm">
