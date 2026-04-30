@@ -47,19 +47,19 @@
         {{-- Fila 2: Filtros con Formulario --}}
         <form method="GET" action="{{ route('calendario') }}" id="filtrosForm" class="flex flex-wrap gap-3 items-center">
             
-            {{-- Búsqueda por Nota de Venta --}}
+            {{-- Búsqueda por NV o Cliente --}}
             <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 shadow-sm hover:shadow-md transition-shadow">
                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <input 
-                    type="text" 
-                    name="nota_venta"
-                    value="{{ request('nota_venta') }}"
-                    class="bg-transparent border-0 focus:outline-none text-sm w-32 placeholder-gray-400" 
-                    placeholder="Buscar NV..."
+                <input
+                    type="text"
+                    name="busqueda"
+                    value="{{ request('busqueda') }}"
+                    class="bg-transparent border-0 focus:outline-none text-sm w-44 placeholder-gray-400"
+                    placeholder="Buscar NV o cliente..."
                 >
-                <button 
+                <button
                     type="submit"
                     class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md transition-all duration-200 shadow-sm hover:shadow">
                     Buscar
@@ -216,7 +216,7 @@ document.getElementById('btnActualizarFechas').addEventListener('click', functio
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
         body: JSON.stringify({
-            nota_venta: formData.get('nota_venta'),
+            busqueda: formData.get('busqueda'),
             tipo_fecha: formData.get('tipo_fecha'),
             fecha_desde: formData.get('fecha_desde'),
             fecha_hasta: formData.get('fecha_hasta')

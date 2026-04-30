@@ -55,9 +55,13 @@ class CalendarioService
      */
     private function aplicarFiltros($query, Request $request)
     {
-        // Filtro por nota de venta
-        if ($request->filled('nota_venta')) {
-            $query->where('nv_folio', 'LIKE', '%' . $request->nota_venta . '%');
+        // Filtro por NV o cliente (busca en ambos campos)
+        if ($request->filled('busqueda')) {
+            $termino = '%' . $request->busqueda . '%';
+            $query->where(function ($q) use ($termino) {
+                $q->where('nv_folio', 'LIKE', $termino)
+                  ->orWhere('nv_cliente', 'LIKE', $termino);
+            });
         }
         
         // Filtro por fechas
